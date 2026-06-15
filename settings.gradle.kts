@@ -16,5 +16,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "DeviceIntelligenceRASP-Sample"
+rootProject.name = "hydra"
 include(":app")
