@@ -11,17 +11,11 @@ protection at process creation.
 All checks run **natively** at startup. A confirmed **CRITICAL** finding
 terminates the process (lethal by default — no advisory/observe mode).
 
-- **Root checks** — su / Magisk / known-root binaries, mounts, and system props.
-- **Hooking checks** — Frida & Xposed presence, ART method / JNI-table tampering,
-  and GOT/PLT redirection (i.e. native + runtime hook detection).
-- **Cloning checks** — app running inside a clone / dual-app / work-profile
-  sandbox, detected from a foreign package leaking into `/proc/self/maps`,
-  mounts, and `/data` paths.
-- **Integrity checks** — APK signature + per-entry tamper detection (including
-  `classes.dex`), native `.text` self-hash, and TEE key attestation.
-- **Hardening** — the native core itself is OLLVM-obfuscated (control-flow
-  flattening, string/constant encryption, indirect calls) and self-verifying, so
-  the checks above are expensive to find, read, or patch out.
+- **Root checks**
+- **Hooking checks**
+- **Cloning checks**
+- **Integrity checks**
+- **Hardening**
 
 ## Integrate
 
