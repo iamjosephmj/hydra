@@ -5,16 +5,14 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-
 dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
         google()
         mavenCentral()
-        // The DeviceIntelligenceRASP runtime AAR (libdicore.so + the logic-free
-        // JVM shims) is consumed as a provided binary from `libs/` — no source.
-        flatDir { dirs("${rootDir}/libs") }
     }
 }
 
 rootProject.name = "hydra"
-include(":app")
+include(":plugin")
+include(":sample")
