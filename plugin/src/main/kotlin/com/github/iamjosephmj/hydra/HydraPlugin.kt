@@ -79,6 +79,14 @@ class HydraPlugin : Plugin<Project> {
             setUrl(repoDir.toURI())
             content { includeGroup(RUNTIME_GROUP) }
         }
+        // Declaring any project repository makes Gradle's default PREFER_PROJECT
+        // mode ignore the settings repositories for this project — which would
+        // break AGP's own resolution (aapt2 from google(), etc.). Re-provide the
+        // standard repos at project level so the host needs no settings changes.
+        // (A host that pins FAIL_ON_PROJECT_REPOS must add the runtime repo in
+        // settings instead — see the README.)
+        project.repositories.google()
+        project.repositories.mavenCentral()
     }
 
     /** Forward the hydra DSL onto the underlying deviceintelligence extension. */
