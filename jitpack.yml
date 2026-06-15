@@ -1,0 +1,7 @@
+# JitPack builds and publishes the hydra plugin (a composite included build
+# under plugin/). The plugin is pure JVM — it vendors prebuilt jars + the
+# runtime AAR, so no Android SDK or native/OLLVM build is needed here.
+jdk:
+  - openjdk17
+install:
+  - cd plugin && ../gradlew publishToMavenLocal -x test
