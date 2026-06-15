@@ -1,0 +1,92 @@
+package com.github.iamjosephmj.hydra
+
+import io.ssemaj.deviceintelligence.gradle.DeviceIntelligenceExtension
+import io.ssemaj.deviceintelligence.gradle.DeviceIntelligencePlugin
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+
+/**
+ * hydra entry point. Vendors the released DeviceIntelligence 3.0.0 runtime and
+ * delegates the baking to the bundled [DeviceIntelligencePlugin].
+ *
+ * Self-contained delivery: the bundled plugin auto-adds
+ * `implementation("io.ssemaj.rasp:deviceintelligence:3.0.0")`. We extract the
+ * vendored AAR + a generated POM into a build-local Maven repo under that exact
+ * coordinate and register the repo, so the auto-runtime resolves offline with no
+ * dependency on the DeviceIntelligenceRASP origin repo.
+ */
+class HydraPlugin : Plugin<Project> {
+    private companion object {
+        const val RUNTIME_GROUP = "io.ssemaj.rasp"
+        const val RUNTIME_ARTIFACT = "deviceintelligence"
+        const val RUNTIME_VERSION = "3.0.0"
+        const val AAR_RESOURCE = "/hydra/deviceintelligence-3.0.0.aar"
+    }
+
+    override fun apply(project: Project) {
+        val hydra = project.extensions.create("hydra", HydraExtension::class.java).apply {
+            verbose.convention(false)
+            encryptStrings.convention(emptySet())
+            enableVpnDetection.convention(false)
+            enableBiometricsDetection.convention(false)
+        }
+
+        // The underlying DeviceIntelligencePlugin references AGP types at
+        // instantiation, so it can only be applied once an Android application
+        // or library plugin is present. Wiring inside withId also matches its
+        // intent — there is nothing to bake without an Android module.
+        project.plugins.withId("com.android.application") { wire(project, hydra) }
+        project.plugins.withId("com.android.library") { wire(project, hydra) }
+    }
+
+    private fun wire(project: Project, hydra: HydraExtension) {
+        injectRuntimeRepo(project)
+        project.pluginManager.apply(DeviceIntelligencePlugin::class.java)
+        forwardConfig(project, hydra)
+    }
+
+    /** Materialise the vendored AAR + POM into a build-local m2 and register it. */
+    private fun injectRuntimeRepo(project: Project) {
+        val repoDir = project.rootProject.layout.buildDirectory
+            .dir("hydra/m2").get().asFile
+        val artDir = repoDir.resolve(
+            "${RUNTIME_GROUP.replace('.', '/')}/$RUNTIME_ARTIFACT/$RUNTIME_VERSION"
+        ).apply { mkdirs() }
+
+        val aar = artDir.resolve("$RUNTIME_ARTIFACT-$RUNTIME_VERSION.aar")
+        if (!aar.exists()) {
+            javaClass.getResourceAsStream(AAR_RESOURCE).use { input ->
+                requireNotNull(input) { "hydra: bundled AAR resource $AAR_RESOURCE missing" }
+                aar.outputStream().use { input.copyTo(it) }
+            }
+        }
+        // The 3.0.0 runtime module declares no dependencies → POM needs none.
+        artDir.resolve("$RUNTIME_ARTIFACT-$RUNTIME_VERSION.pom").writeText(
+            """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <project xmlns="http://maven.apache.org/POM/4.0.0">
+              <modelVersion>4.0.0</modelVersion>
+              <groupId>$RUNTIME_GROUP</groupId>
+              <artifactId>$RUNTIME_ARTIFACT</artifactId>
+              <version>$RUNTIME_VERSION</version>
+              <packaging>aar</packaging>
+            </project>
+            """.trimIndent() + "\n"
+        )
+
+        project.repositories.maven {
+            name = "hydraRuntime"
+            setUrl(repoDir.toURI())
+            content { includeGroup(RUNTIME_GROUP) }
+        }
+    }
+
+    /** Forward the hydra DSL onto the underlying deviceintelligence extension. */
+    private fun forwardConfig(project: Project, hydra: HydraExtension) {
+        val di = project.extensions.getByType(DeviceIntelligenceExtension::class.java)
+        di.verbose.set(hydra.verbose)
+        di.encryptStrings.set(hydra.encryptStrings)
+        di.enableVpnDetection.set(hydra.enableVpnDetection)
+        di.enableBiometricsDetection.set(hydra.enableBiometricsDetection)
+    }
+}
