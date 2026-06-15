@@ -1,4 +1,4 @@
-# DeviceIntelligenceRASP — Sample consumer
+# hydra — DeviceIntelligenceRASP sample consumer
 
 A minimal, self-contained Android app that **consumes DeviceIntelligenceRASP as
 provided binaries** — no source. It demonstrates the entire integration:
