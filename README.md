@@ -1,10 +1,35 @@
 # hydra
 
-One Gradle plugin that bakes [DeviceIntelligence RASP](https://github.com/iamjosephmj/DeviceIntelligenceRASP)
-into **any** Android app — no source, no runtime code to write. Apply it and the
-built APK ships the heavily OLLVM-obfuscated native core (`libdicore.so`), a
-per-build integrity baseline, and a randomized bootstrap that starts the
-protection at process creation.
+**A Gradle-plugin RASP for Android.** hydra is Runtime Application Self-Protection
+that you add the way you add any other build plugin. At build time it
+**dynamically injects** a hardened native protection layer straight into your
+APK — you write no security code and ship no new dependency. Apply the plugin,
+build your app, and the output APK comes out self-defending.
+
+Concretely, applying hydra bakes into your APK a heavily OLLVM-obfuscated native
+core (`libdicore.so`), a per-build integrity baseline, and a randomized bootstrap
+that starts the protection at process creation. The protection runs on-device,
+in native code, with no servers and no SDK calls in your code.
+
+## Philosophy
+
+Security on a device you don't control is never absolute. A determined,
+well-resourced attacker with unlimited time can defeat any client-side
+protection — anything that runs can eventually be observed and undone. hydra does
+not pretend otherwise.
+
+What it does is **raise the cost**. Most attacks are opportunistic and tooling-
+driven; they move on when an app doesn't crack open in five minutes with the
+usual tools. hydra is built on a simple premise: **some protection is far better
+than none.** An unprotected app is trivially repackaged, hooked, and cloned; a
+hydra-protected one forces an attacker through obfuscated native code,
+self-verification, and unconditional enforcement first. That is *delay, not
+denial* — and for most apps, delay is what changes the economics.
+
+It is also **friction-free**: protection you can turn on with one plugin line is
+protection that actually ships. The best client-side hardening is the kind a team
+will actually adopt — so hydra optimizes for "good protection, applied" over
+"perfect protection, skipped."
 
 ## What it checks
 
