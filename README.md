@@ -39,6 +39,10 @@ native protection layer straight into your APK — no security code, no SDK call
 no servers. **Apply the plugin, build your app, and the output APK comes out
 self-defending.**
 
+<br>
+
+🕹️ &nbsp; 👾 &nbsp; 🪙 &nbsp; ⚡ &nbsp; 🛡️ &nbsp; 🔒 &nbsp; 💥 &nbsp; 🎯 &nbsp; 🏆 &nbsp; 👾 &nbsp; 🕹️
+
 </div>
 
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:FF0080,100:00F0FF&height=3" width="100%"/>
@@ -77,7 +81,8 @@ over *"perfect protection, skipped."*
 | 🛡️ | 🪝 | 👯 | 🔏 | 🧬 |
 |:--:|:--:|:--:|:--:|:--:|
 | **ROOT** | **HOOKING** | **CLONING** | **INTEGRITY** | **HARDENING** |
-| `▰▰▰` | `▰▰▰` | `▰▰▰` | `▰▰▰` | `▰▰▰` |
+| `▰▰▰▰▰` | `▰▰▰▰▰` | `▰▰▰▰▰` | `▰▰▰▰▰` | `▰▰▰▰▰` |
+| 🟢 `ON` | 🟢 `ON` | 🟢 `ON` | 🟢 `ON` | 🟢 `ON` |
 
 </div>
 
@@ -105,7 +110,7 @@ no one home.
 
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:00F0FF,100:B026FF&height=3" width="100%"/>
 
-## ▶ &nbsp; STAGE 1 — INSERT COIN (Download)
+## ▶ 🪙 &nbsp; STAGE 1 — INSERT COIN (Download)
 
 [![JitPack](https://img.shields.io/jitpack/version/com.github.iamjosephmj/hydra?style=for-the-badge&color=FFD700&labelColor=0D0221&label=GET%20IT%20ON%20JITPACK)](https://jitpack.io/#iamjosephmj/hydra)
 
@@ -122,7 +127,7 @@ pluginManagement {
 }
 ```
 
-## ▶ &nbsp; STAGE 2 — START GAME (Integrate)
+## ▶ 🕹️ &nbsp; STAGE 2 — START GAME (Integrate)
 
 Apply the plugin in your **app module's `build.gradle.kts`**:
 
@@ -190,7 +195,7 @@ resolves.
 
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:FF0080,100:FFD700&height=3" width="100%"/>
 
-## ▶ &nbsp; BONUS STAGE — 🔐 SECRET VAULT
+## ▶ 💎 &nbsp; BONUS STAGE — 🔐 SECRET VAULT
 
 Keep sensitive strings (API URLs, header names, keys) out of your APK as
 plaintext, and read them back in Kotlin. Each value is encrypted at build time
@@ -198,7 +203,7 @@ with a **fresh per-build key** that is **re-derived in the obfuscated native
 runtime** at decrypt time — the key and the plaintext never touch `classes.dex`,
 only ciphertext.
 
-**1. Stash the secrets** in your app module's `build.gradle.kts`:
+**1️⃣ Stash the secrets** 💾 in your app module's `build.gradle.kts`:
 
 ```kotlin
 hydra {
@@ -209,7 +214,7 @@ hydra {
 }
 ```
 
-**2. Unlock them in Kotlin** via the generated `Hydra` accessor:
+**2️⃣ Unlock them in Kotlin** 🔓 via the generated `Hydra` accessor:
 
 ```kotlin
 import com.github.iamjosephmj.hydra.Hydra
