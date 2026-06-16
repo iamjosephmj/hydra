@@ -74,7 +74,7 @@ Android application plugin:
 ```kotlin
 plugins {
     id("com.android.application")
-    id("com.github.iamjosephmj.hydra") version "1.0.0"
+    id("com.github.iamjosephmj.hydra") version "1.0.1"
 }
 ```
 
@@ -123,7 +123,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "com.github.iamjosephmj.hydra") {
-                useModule("com.github.iamjosephmj.hydra:com.github.iamjosephmj.hydra.gradle.plugin:1.0.0")
+                useModule("com.github.iamjosephmj.hydra:com.github.iamjosephmj.hydra.gradle.plugin:1.0.1")
             }
         }
     }
@@ -135,34 +135,47 @@ If you pin `dependencyResolutionManagement` to `FAIL_ON_PROJECT_REPOS`, also add
 resolves.
 </details>
 
-## String encryption
+## Secrets — encrypted strings with a Kotlin accessor
 
-hydra can encrypt selected `String` constants so they never appear as plaintext
-in the dex. Each build uses a fresh random key that is **re-derived in the
-obfuscated native code at runtime** — the key is never shipped in the dex, and
-the ciphertext differs on every build.
+hydra lets you keep sensitive strings (API URLs, header names, keys) out of your
+APK as plaintext. You register them by name in the build; at build time each
+value is encrypted under a **fresh per-build key** that is derived in the closed
+baker and **re-derived in the obfuscated native runtime** at decrypt time — the
+key and the plaintext are never written into `classes.dex`, only ciphertext.
 
-Enable the transform and allowlist the exact strings to protect:
-
-```bash
-./gradlew :app:assembleRelease -Pdi.dexstrings=true
-```
+**1. Declare the secrets** in your app module's `build.gradle.kts`:
 
 ```kotlin
 hydra {
-    encryptStrings.add("https://api.your-backend.example/v1")
-    encryptStrings.add("YOUR_API_SECRET_HEADER")
+    secrets {
+        put("apiUrl", "https://api.your-backend.example/v1")
+        put("apiKey", "sk_live_abc123")
+    }
 }
 ```
 
-Only **exact-match** allowlisted strings are transformed.
+**2. Read them in Kotlin** via the generated `Hydra` accessor:
+
+```kotlin
+import com.github.iamjosephmj.hydra.Hydra
+
+val url = Hydra.secret("apiUrl")
+val key = Hydra.secret("apiKey")
+httpClient.get(url) { header("X-Api-Key", key) }
+```
+
+`Hydra.secret(name)` returns the decrypted value at the point of use. In the
+built APK, `classes.dex` contains only the ciphertext and the `Hydra.secret(...)`
+call — never the plaintext. (Decryption happens through the native runtime, so a
+genuine device decrypts transparently while static analysis of the APK yields
+nothing readable.)
 
 > [!NOTE]
-> As shipped, the transform rewrites classes in the `io.ssemaj.*` package (the
-> RASP runtime). To also encrypt constants in **your own app's** packages
-> (`com.yourcompany.*`), the transform's class filter must be widened to your
-> package — a small plugin change, not a config flag. Open an issue if you want
-> hydra to cover your package.
+> This is "no static plaintext", not a secret vault. The decrypted value exists
+> in memory at runtime, so a runtime hook could read it — which is exactly what
+> hydra's hooking/ART checks are there to detect and kill. It removes the trivial
+> `strings classes.dex` / jadx extraction and raises the bar; for high-value
+> secrets, keep them server-side.
 
 ## How it behaves on-device
 

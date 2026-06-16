@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.iamjosephmj"
-version = "1.0.0"
+version = "1.0.1"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -35,6 +35,17 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
+}
+
+// SHADE the vendored jars into the published plugin jar. `implementation(files(..))`
+// keeps them on the in-repo composite-build runtime classpath, but local file
+// dependencies do NOT survive publishing — so an external (JitPack) consumer
+// would be missing DeviceIntelligencePlugin + DiBaker classes. Merging the class
+// entries into our own jar makes the published plugin self-contained.
+tasks.jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(zipTree("libs/deviceintelligence-gradle-3.0.0.jar")) { exclude("META-INF/**") }
+    from(zipTree("libs/deviceintelligence-baker-3.0.0.jar")) { exclude("META-INF/**") }
 }
 
 tasks.test { useJUnitPlatform() }
