@@ -80,7 +80,7 @@ over *"perfect protection, skipped."*
 
 | 🛡️ | 🪝 | 👯 | 👾 | 🔏 | 🧬 |
 |:--:|:--:|:--:|:--:|:--:|:--:|
-| **ROOT** | **HOOKING** | **CLONING** | **EMULATOR** | **INTEGRITY** | **HARDENING** |
+| **ROOT** | **HOOKING** | **CLONE / VIRTUAL** | **EMULATOR** | **INTEGRITY** | **HARDENING** |
 | `▰▰▰▰▰` | `▰▰▰▰▰` | `▰▰▰▰▰` | `▰▰▰▰▰` | `▰▰▰▰▰` | `▰▰▰▰▰` |
 | 🟢 `ON` | 🟢 `ON` | 🟢 `ON` | 🟢 `ON` | 🟢 `ON` | 🟢 `ON` |
 
@@ -99,7 +99,7 @@ no one home.
 |:--:|:--|
 | 🚫 | **No network calls.** The runtime declares **no `INTERNET` permission** — it *physically cannot* transmit. No telemetry, no analytics, no crash-reporting SDK, no "phone-home". |
 | 📵 | **No identifiers.** No advertising ID, no device fingerprint sent anywhere, no user IDs, no cookies. |
-| 🏠 | **Everything stays local.** Every check (root / hooking / cloning / emulator / integrity) and the kill decision is computed **on the device** and never leaves it. |
+| 🏠 | **Everything stays local.** Every check (root / hooking / cloning / virtualization / emulator / integrity) and the kill decision is computed **on the device** and never leaves it. |
 | 🇪🇺 | **GDPR-ready.** hydra processes no personal data off-device and shares nothing with anyone — it adds **zero** data-collection or third-party data-sharing to your app. |
 
 > [!NOTE]
@@ -257,10 +257,14 @@ process is terminated (an organic-looking native crash) at startup. Running on a
 **emulator** (QEMU / KVM / HAXM / cloud-phone) is blocked too — caught by
 CPU-identity probes (`CNTFRQ_EL0` on ARM, the CPUID hypervisor-vendor leaf on x86)
 and by software-only key attestation (no hardware-backed TEE evidence). Running
-inside a **virtualization / dual-app / virtual-space runtime** (app-cloning
-containers) trips the cloning check. On a **genuine** device nothing is critical
-and the app runs normally. Expect a baked APK to crash on a rooted, emulated, or
-virtualized test device — that is the RASP working as intended.
+inside a **virtualization / app-cloning / virtual-space** runtime — VirtualApp,
+Parallel Space, Dual Space, Island, VirtualXposed, work-profile clones, and the
+like — is blocked too: the cloner check flags `apk_path_mismatch` (the APK isn't
+where the real install lives) and `data_dir_mount_invalid` (the data dir is the
+container's overlay, not the real per-app mount), and the container's loader
+hooks trip the native GOT-integrity check. On a **genuine** device nothing is
+critical and the app runs normally. Expect a baked APK to crash on a rooted,
+emulated, or virtualized test device — that is the RASP working as intended.
 
 ## 🎮 &nbsp; TRY THE DEMO
 
