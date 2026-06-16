@@ -1,109 +1,94 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 340" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animated three-headed neon hydra">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animated three-headed neon hydra">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#1A0B2E"/>
-      <stop offset="0.55" stop-color="#0D0221"/>
-      <stop offset="1" stop-color="#000000"/>
+      <stop offset="0" stop-color="#1A0B2E"/><stop offset="0.6" stop-color="#0D0221"/><stop offset="1" stop-color="#000"/>
     </linearGradient>
-    <radialGradient id="aura" cx="0.5" cy="0.85" r="0.7">
-      <stop offset="0" stop-color="#B026FF" stop-opacity="0.45"/>
-      <stop offset="0.5" stop-color="#FF2E97" stop-opacity="0.12"/>
+    <radialGradient id="aura" cx="0.5" cy="0.9" r="0.8">
+      <stop offset="0" stop-color="#B026FF" stop-opacity="0.5"/>
+      <stop offset="0.55" stop-color="#FF2E97" stop-opacity="0.12"/>
       <stop offset="1" stop-color="#0D0221" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="gCyan" x1="0" y1="1" x2="0" y2="0">
-      <stop offset="0" stop-color="#0a6b73"/><stop offset="1" stop-color="#00F0FF"/>
+    <linearGradient id="fCyan" x1="0" y1="1" x2="0.4" y2="0">
+      <stop offset="0" stop-color="#063b42"/><stop offset="1" stop-color="#36e9f6"/>
     </linearGradient>
-    <linearGradient id="gMag" x1="0" y1="1" x2="0" y2="0">
-      <stop offset="0" stop-color="#7a1450"/><stop offset="1" stop-color="#FF2E97"/>
+    <linearGradient id="fMag" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#5e0f3e"/><stop offset="1" stop-color="#ff45a6"/>
     </linearGradient>
-    <linearGradient id="gPur" x1="0" y1="1" x2="0" y2="0">
-      <stop offset="0" stop-color="#4b1280"/><stop offset="1" stop-color="#B026FF"/>
+    <linearGradient id="fPur" x1="0" y1="1" x2="0.6" y2="0">
+      <stop offset="0" stop-color="#34105a"/><stop offset="1" stop-color="#c057ff"/>
     </linearGradient>
     <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
-      <feGaussianBlur stdDeviation="4" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-    <filter id="soft" x="-80%" y="-80%" width="260%" height="260%">
-      <feGaussianBlur stdDeviation="10"/>
+      <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
 
-    <!-- reusable serpent head, point-up, origin at the mouth-base -->
+    <!-- SLEEK serpent head, profile facing LEFT (snout to -x), crest swept up-right.
+         Origin (0,0) = neck attach at the back of the head. -->
     <g id="head">
-      <path d="M0,-46 C16,-40 22,-20 17,-2 L13,12 C11,22 -11,22 -13,12 L-17,-2 C-22,-20 -16,-40 0,-46 Z"
-            fill="#0D0221" stroke-width="3"/>
-      <!-- crest spikes -->
-      <path d="M0,-46 L-6,-58 M0,-46 L6,-58 M-9,-40 L-16,-50 M9,-40 L16,-50"
-            fill="none" stroke-width="2.5" stroke-linecap="round"/>
-      <!-- eye -->
-      <circle class="eye" cx="6" cy="-16" r="3.6" fill="#FFFFFF"/>
-      <!-- forked tongue -->
-      <g class="tongue" opacity="0.6">
-        <path d="M0,12 L0,30 M0,30 L-5,38 M0,30 L5,38" fill="none" stroke="#FF2E97" stroke-width="2" stroke-linecap="round"/>
+      <!-- swept crest spikes -->
+      <path d="M0,-7 L34,-48 L13,-13 Z" class="skin" stroke-width="2"/>
+      <path d="M11,-11 L46,-40 L23,-6 Z" class="skin" stroke-width="2"/>
+      <!-- long wedge skull + snout (sharp nose at far left) + slim open jaws -->
+      <path d="M4,-2
+               C0,-20 -16,-24 -34,-23
+               C-56,-22 -78,-16 -98,-7
+               C-92,-3 -82,-2 -72,-2
+               L-94,2
+               C-78,4 -66,4 -54,5
+               L-70,11
+               C-44,13 -20,12 -2,5
+               C3,3 5,1 4,-2 Z"
+            class="skin" stroke-width="2.6"/>
+      <!-- almond slit eye -->
+      <g class="eye"><path d="M-30,-9 q8,-5 15,0 q-8,4 -15,0 Z" fill="#fff"/><ellipse cx="-23" cy="-9" rx="1.5" ry="3" fill="#0D0221"/></g>
+      <!-- forked tongue flicking out of the maw -->
+      <g class="tongue" opacity="0.7">
+        <path d="M-96,-2 C-110,-3 -118,-9 -130,-5 M-130,-5 L-142,-10 M-130,-5 L-142,0"
+              fill="none" stroke="#FF2E97" stroke-width="2.3" stroke-linecap="round"/>
       </g>
     </g>
   </defs>
 
-  <rect width="900" height="340" fill="url(#bg)"/>
-  <ellipse cx="450" cy="300" rx="430" ry="120" fill="url(#aura)">
-    <animate attributeName="opacity" values="0.7;1;0.7" dur="3.6s" repeatCount="indefinite"/>
+  <rect width="900" height="360" fill="url(#bg)"/>
+  <ellipse cx="450" cy="322" rx="450" ry="128" fill="url(#aura)">
+    <animate attributeName="opacity" values="0.7;1;0.7" dur="3.8s" repeatCount="indefinite"/>
   </ellipse>
 
-  <!-- coiled body -->
+  <!-- LEFT neck (cyan) — flows up & curves, head faces out-left -->
   <g filter="url(#glow)">
-    <path d="M250,312 C330,272 570,272 650,312" fill="none" stroke="#B026FF" stroke-width="16" stroke-linecap="round" opacity="0.8"/>
-    <ellipse cx="450" cy="306" rx="120" ry="30" fill="#160A2B" stroke="#FF2E97" stroke-width="2.5"/>
+    <animateTransform attributeName="transform" type="rotate" additive="sum" values="-3 450 334; 3 450 334; -3 450 334" dur="4.6s" repeatCount="indefinite"/>
+    <path d="M470,344 C470,280 250,300 220,222 C204,180 215,150 195,128" fill="none" stroke="url(#fCyan)" stroke-width="26" stroke-linecap="round"/>
+    <path d="M470,344 C470,280 250,300 220,222 C204,180 215,150 195,128" fill="none" stroke="#bafcff" stroke-width="8" stroke-linecap="round" opacity="0.75"/>
+    <g transform="translate(195,128) rotate(20)" fill="url(#fCyan)" stroke="#bafcff"><use href="#head"/></g>
+  </g>
+  <!-- RIGHT neck (purple) — mirror -->
+  <g filter="url(#glow)">
+    <animateTransform attributeName="transform" type="rotate" additive="sum" values="3 450 334; -3 450 334; 3 450 334" dur="5.2s" repeatCount="indefinite"/>
+    <path d="M430,344 C430,280 650,300 680,222 C696,180 685,150 705,128" fill="none" stroke="url(#fPur)" stroke-width="26" stroke-linecap="round"/>
+    <path d="M430,344 C430,280 650,300 680,222 C696,180 685,150 705,128" fill="none" stroke="#ecccff" stroke-width="8" stroke-linecap="round" opacity="0.75"/>
+    <g transform="translate(705,128) rotate(-20) scale(-1,1)" fill="url(#fPur)" stroke="#ecccff"><use href="#head"/></g>
+  </g>
+  <!-- CENTRE neck (magenta) — tallest, head rears up -->
+  <g filter="url(#glow)">
+    <animateTransform attributeName="transform" type="rotate" additive="sum" values="2 450 336; -2 450 336; 2 450 336" dur="4s" repeatCount="indefinite"/>
+    <path d="M450,346 C470,276 420,222 452,156 C462,128 458,110 452,92" fill="none" stroke="url(#fMag)" stroke-width="28" stroke-linecap="round"/>
+    <path d="M450,346 C470,276 420,222 452,156 C462,128 458,110 452,92" fill="none" stroke="#ffc6e4" stroke-width="9" stroke-linecap="round" opacity="0.8"/>
+    <g transform="translate(452,92) rotate(-58)" fill="url(#fMag)" stroke="#ffc6e4"><use href="#head"/></g>
   </g>
 
-  <!-- LEFT head (cyan) -->
-  <g>
-    <animateTransform attributeName="transform" type="rotate" additive="sum"
-      values="-3.5 450 300; 3 450 300; -3.5 450 300" dur="4.2s" repeatCount="indefinite"/>
-    <g filter="url(#glow)">
-      <path d="M450,300 C380,256 300,272 270,206 C246,150 236,122 217,100" fill="none"
-            stroke="url(#gCyan)" stroke-width="15" stroke-linecap="round"/>
-      <path d="M450,300 C380,256 300,272 270,206 C246,150 236,122 217,100" fill="none"
-            stroke="#CFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.85"/>
-    </g>
-    <g transform="translate(213,96) rotate(-42)" stroke="#00F0FF" filter="url(#glow)">
-      <use href="#head"/>
-    </g>
+  <!-- coiled body, on top of the neck roots -->
+  <g filter="url(#glow)">
+    <path d="M250,340 C320,302 580,302 650,340" fill="none" stroke="#6f1248" stroke-width="32" stroke-linecap="round"/>
+    <path d="M250,340 C320,302 580,302 650,340" fill="none" stroke="#FF2E97" stroke-width="10" stroke-linecap="round" opacity="0.85"/>
+    <ellipse cx="450" cy="332" rx="120" ry="26" fill="#160A2B" stroke="#B026FF" stroke-width="2.5"/>
   </g>
 
-  <!-- RIGHT head (purple) -->
-  <g>
-    <animateTransform attributeName="transform" type="rotate" additive="sum"
-      values="3.5 450 300; -3 450 300; 3.5 450 300" dur="4.8s" repeatCount="indefinite"/>
-    <g filter="url(#glow)">
-      <path d="M450,300 C520,256 600,272 630,206 C654,150 664,122 683,100" fill="none"
-            stroke="url(#gPur)" stroke-width="15" stroke-linecap="round"/>
-      <path d="M450,300 C520,256 600,272 630,206 C654,150 664,122 683,100" fill="none"
-            stroke="#E9C6FF" stroke-width="4" stroke-linecap="round" opacity="0.85"/>
-    </g>
-    <g transform="translate(687,96) rotate(42)" stroke="#B026FF" filter="url(#glow)">
-      <use href="#head"/>
-    </g>
-  </g>
-
-  <!-- CENTER head (magenta) -->
-  <g>
-    <animateTransform attributeName="transform" type="rotate" additive="sum"
-      values="2 450 300; -2 450 300; 2 450 300" dur="3.6s" repeatCount="indefinite"/>
-    <g filter="url(#glow)">
-      <path d="M450,300 C462,238 432,184 450,140 C462,104 456,84 450,60" fill="none"
-            stroke="url(#gMag)" stroke-width="16" stroke-linecap="round"/>
-      <path d="M450,300 C462,238 432,184 450,140 C462,104 456,84 450,60" fill="none"
-            stroke="#FFD7EC" stroke-width="4.5" stroke-linecap="round" opacity="0.9"/>
-    </g>
-    <g transform="translate(450,56)" stroke="#FF2E97" filter="url(#glow)">
-      <use href="#head"/>
-    </g>
-  </g>
-
-  <!-- shared eye + tongue pulse via CSS -->
   <style>
-    .eye { animation: blink 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-    @keyframes blink { 0%,90%,100% { opacity:1; } 94% { opacity:0.15; } }
-    .tongue { animation: flick 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: top center; }
-    @keyframes flick { 0%,70%,100% { opacity:0; transform: scaleY(0.4); } 78%,88% { opacity:1; transform: scaleY(1); } }
+    .skin { paint-order: stroke; }
+    .gap  { fill:#0D0221; }
+    .line { stroke:#FFE3F1; }
+    .eye  { animation: blink 3.4s ease-in-out infinite; }
+    @keyframes blink { 0%,91%,100%{opacity:1} 95%{opacity:.12} }
+    .tongue { animation: flick 2.6s ease-in-out infinite; }
+    @keyframes flick { 0%,66%,100%{opacity:0} 74%,90%{opacity:.85} }
   </style>
 </svg>
