@@ -216,8 +216,14 @@ device — that is the RASP working as intended.
 
 ## 🎮 &nbsp; TRY THE DEMO
 
-A minimal, runnable host app lives in [`sample/`](sample) and proves the
-"any app" claim end to end:
+A minimal, runnable host app lives in [`sample/`](sample). It declares two
+`secrets {}` at build time and displays them **decrypted at runtime** via
+`Hydra.secret(...)` — the plaintext is **never** in `classes.dex`, yet it shows
+up on screen. Real device, real round-trip:
+
+<div align="center">
+  <img src="art/sample-arcade.png" alt="hydra sample — decrypted secrets on screen" width="300"/>
+</div>
 
 ```bash
 ./gradlew :sample:assembleRelease
