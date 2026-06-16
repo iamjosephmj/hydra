@@ -4,7 +4,7 @@
 
 <div align="center">
 
-<img src="art/hydra.svg" width="100%" alt="Animated three-headed neon hydra"/>
+<img src="art/hydra.svg" width="300" alt="Animated neon hydra emblem"/>
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:FF0080,45:B026FF,100:00F0FF&height=230&section=header&text=HYDRA&fontSize=96&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=RUNTIME%20APPLICATION%20SELF-PROTECTION%20//%20ONE%20GRADLE%20PLUGIN&descAlignY=60&descSize=18" width="100%"/>
 
