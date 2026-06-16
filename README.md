@@ -247,7 +247,7 @@ A minimal, runnable host app lives in [`sample/`](sample). It declares two
 up on screen. Real device, real round-trip:
 
 <div align="center">
-  <img src="art/sample-arcade.png" alt="hydra sample — decrypted secrets on screen" width="300"/>
+  <img src="art/sample-demo.png" alt="hydra sample — decrypted secrets on screen" width="300"/>
 </div>
 
 ```bash
