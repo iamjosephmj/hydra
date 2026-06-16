@@ -134,7 +134,7 @@ Apply the plugin in your **app module's `build.gradle.kts`**:
 ```kotlin
 plugins {
     id("com.android.application")
-    id("com.github.iamjosephmj.hydra") version "1.1.0"
+    id("com.github.iamjosephmj.hydra") version "1.2.0"
 }
 ```
 
@@ -180,7 +180,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "com.github.iamjosephmj.hydra") {
-                useModule("com.github.iamjosephmj.hydra:com.github.iamjosephmj.hydra.gradle.plugin:1.1.0")
+                useModule("com.github.iamjosephmj.hydra:com.github.iamjosephmj.hydra.gradle.plugin:1.2.0")
             }
         }
     }
