@@ -239,10 +239,12 @@ built APK, `classes.dex` holds **only ciphertext + the `Hydra.secret(...)` call*
 
 ## 💀 &nbsp; GAME OVER SCREEN (on-device behavior)
 
-On a **tampered / rooted / hooked / cloned** device the process is terminated (an
-organic-looking native crash) at startup. On a **genuine** device nothing is
-critical and the app runs normally. Expect a baked APK to crash on a rooted test
-device — that is the RASP working as intended.
+On a **tampered / rooted / hooked / cloned / virtualized** device the process is
+terminated (an organic-looking native crash) at startup. Running the app inside a
+**virtualization / dual-app / virtual-space runtime** (app-cloning containers)
+trips the cloning check and is blocked too. On a **genuine** device nothing is
+critical and the app runs normally. Expect a baked APK to crash on a rooted or
+virtualized test device — that is the RASP working as intended.
 
 ## 🎮 &nbsp; TRY THE DEMO
 
