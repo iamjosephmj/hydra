@@ -214,13 +214,16 @@ hydra {
 }
 ```
 
-**2️⃣ Unlock them in Kotlin** 🔓 via the generated `Hydra` accessor:
+**2️⃣ Unlock them in Kotlin** 🔓 via the generated `Hydra` accessor — **off the
+main thread** (it blocks until the device clears the first sweep):
 
 ```kotlin
 import com.github.iamjosephmj.hydra.Hydra
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-val url = Hydra.secret("apiUrl")
-val key = Hydra.secret("apiKey")
+val url = withContext(Dispatchers.IO) { Hydra.secret("apiUrl") }
+val key = withContext(Dispatchers.IO) { Hydra.secret("apiKey") }
 httpClient.get(url) { header("X-Api-Key", key) }
 ```
 
@@ -228,12 +231,22 @@ httpClient.get(url) { header("X-Api-Key", key) }
 built APK, `classes.dex` holds **only ciphertext + the `Hydra.secret(...)` call**
 — never the plaintext.
 
+> [!IMPORTANT]
+> **Sweep-gated (since `1.2.1`).** `Hydra.secret()` **blocks until the first
+> detection sweep completes clean** (zero CRITICAL), then decrypts — the key is
+> cryptographically bound to a secret the native runtime publishes *only* on a
+> clean device. On a **rooted / hooked / emulated / cloned / tampered** device the
+> process is killed before the sweep clears, so the plaintext **never
+> materialises — not even for a frame**. Because it blocks, **call it off the main
+> thread** (`Dispatchers.IO`); calling it on the UI thread can ANR.
+
 > [!NOTE]
-> This is *"no static plaintext"*, not a vault. The decrypted value lives in
-> memory at runtime, so a runtime hook could read it — which is exactly what
-> hydra's hooking/ART checks detect and kill. It removes the trivial
-> `strings classes.dex` / jadx extraction and raises the bar; for high-value
-> secrets, keep them server-side.
+> This is *"no static plaintext"*, not a vault. On a clean device the decrypted
+> value lives in memory at runtime, so a runtime hook *there* could read it —
+> which is exactly what hydra's hooking/ART checks detect and kill. It removes the
+> trivial `strings classes.dex` / jadx extraction and the "screenshot the secret
+> on an emulator" path, and raises the bar; for high-value secrets, keep them
+> server-side.
 
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:FFD700,100:FF0080&height=3" width="100%"/>
 

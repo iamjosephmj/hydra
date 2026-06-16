@@ -13,11 +13,22 @@ import java.security.SecureRandom
  * Generates `com.github.iamjosephmj.hydra.Hydra` into the consumer app with the
  * named secrets encrypted under a fresh per-build key.
  *
- * The key is derived in the closed baker (`DiBaker.dexKey`), byte-identical to
- * the native `binding.cpp::derive_dex_key` — so only the seed + ciphertext land
- * in the dex, never the key or the plaintext. At runtime `Hydra.secret(name)`
- * hands the ciphertext + seed to `StrDec.d`, which re-derives the key through the
- * obfuscated native runtime and returns the plaintext at the point of use.
+ * The key is derived in the closed baker (`DiBaker.gatedDexKey`), byte-identical
+ * to the native `binding.cpp::derive_dex_key_gated` — so only the seed +
+ * ciphertext land in the dex, never the key or the plaintext.
+ *
+ * SWEEP-GATED (DeviceIntelligence 3.2.0+): the key is bound to the unlock secret
+ * U, which the native runtime publishes ONLY after the first detection sweep
+ * completes clean (zero CRITICAL). At runtime `Hydra.secret(name)` hands the
+ * ciphertext + seed to `StrDec.g`, which **blocks until that clean sweep** and
+ * then re-derives the key. On a compromised device (root / hook / emulator /
+ * clone / tamper) the sweep finds CRITICAL and the process is killed first, so
+ * the secret is NEVER decrypted — no plaintext ever reaches the screen, not even
+ * for a frame. Because `Hydra.secret` blocks, it MUST be called off the main
+ * thread (e.g. `Dispatchers.IO`); calling it on the UI thread can ANR.
+ *
+ * This is the ONLY decryptor the generator emits — it is gated by construction;
+ * there is no ungated path a consumer secret can reach.
  */
 abstract class GenerateHydraSecretsTask : DefaultTask() {
 
@@ -32,7 +43,7 @@ abstract class GenerateHydraSecretsTask : DefaultTask() {
         val secretMap = secrets.get()
         val seed = ByteArray(32).also { SecureRandom().nextBytes(it) }
         val seedHex = toHex(seed)
-        val key = DiBaker.dexKey(seed)
+        val key = DiBaker.gatedDexKey(seed)   // sweep-gated key (mixes the unlock secret U)
 
         val pkgDir = outputDir.get().asFile.resolve("com/github/iamjosephmj/hydra")
         pkgDir.mkdirs()
@@ -52,13 +63,19 @@ abstract class GenerateHydraSecretsTask : DefaultTask() {
         }
         sb.append("    }\n\n")
         sb.append("    private Hydra() {}\n\n")
-        sb.append("    /** Decrypted value of the named secret; throws if the name is unknown. */\n")
+        sb.append("    /**\n")
+        sb.append("     * Decrypted value of the named secret; throws if the name is unknown.\n")
+        sb.append("     * SWEEP-GATED: BLOCKS until the first detection sweep completes clean,\n")
+        sb.append("     * then decrypts. On a compromised device the process is killed before\n")
+        sb.append("     * this returns, so the plaintext never materialises. Call OFF the main\n")
+        sb.append("     * thread (e.g. Dispatchers.IO) — calling it on the UI thread can ANR.\n")
+        sb.append("     */\n")
         sb.append("    public static String secret(String name) {\n")
         sb.append("        String ct = S.get(name);\n")
         sb.append("        if (ct == null) {\n")
         sb.append("            throw new IllegalArgumentException(\"hydra: unknown secret '\" + name + \"'\");\n")
         sb.append("        }\n")
-        sb.append("        return io.ssemaj.deviceintelligence.internal.StrDec.d(ct, SEED);\n")
+        sb.append("        return io.ssemaj.deviceintelligence.internal.StrDec.g(ct, SEED);\n")
         sb.append("    }\n")
         sb.append("}\n")
 
