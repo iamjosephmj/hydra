@@ -28,7 +28,17 @@ android {
     }
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // R8: shrink + obfuscate the consumer's own code (a realistic release).
+            // The DeviceIntelligence runtime ships consumer ProGuard rules that keep
+            // its JNI anchor / up-call shims; proguard-rules.pro keeps the generated
+            // hydra secrets accessor. Verified the RASP still kills + the secret stays
+            // sweep-gated after minification.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
             signingConfig = signingConfigs.getByName("demo")
         }
     }
