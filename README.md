@@ -18,6 +18,13 @@
   <img src="https://img.shields.io/badge/GRADLE-02303A?style=for-the-badge&logo=gradle&logoColor=00F0FF&labelColor=0D0221"/>
 </p>
 
+<p>
+  <img src="https://img.shields.io/badge/TRACKING-ZERO-39FF14?style=for-the-badge&labelColor=0D0221"/>
+  <img src="https://img.shields.io/badge/100%25-ON--DEVICE-FFD700?style=for-the-badge&labelColor=0D0221"/>
+  <img src="https://img.shields.io/badge/GDPR-READY-00F0FF?style=for-the-badge&labelColor=0D0221"/>
+  <a href="https://github.com/iamjosephmj/hydra/actions/workflows/release-apk.yml"><img src="https://img.shields.io/github/actions/workflow/status/iamjosephmj/hydra/release-apk.yml?style=for-the-badge&labelColor=0D0221&color=B026FF&label=CI"/></a>
+</p>
+
 ```
         ╔═══════════════════════════════════════════════════════════════╗
         ║   ▶ P1     ROOT ▰▰▰   HOOK ▰▰▰   CLONE ▰▰▰   INTEGRITY ▰▰▰   ║
@@ -75,6 +82,26 @@ over *"perfect protection, skipped."*
 </div>
 
 > All checks run **natively** at startup. A confirmed **CRITICAL** finding terminates the process — **lethal by default**, no advisory/observe mode. ⚠️ **GAME OVER** for tampered devices.
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:00F0FF,100:B026FF&height=3" width="100%"/>
+
+## 🛰️ &nbsp; ZERO TRACKING · GDPR-READY
+
+hydra is **100% on-device**. It collects nothing, transmits nothing, and phones
+no one home.
+
+| ✔ | &nbsp; |
+|:--:|:--|
+| 🚫 | **No network calls.** The runtime declares **no `INTERNET` permission** — it *physically cannot* transmit. No telemetry, no analytics, no crash-reporting SDK, no "phone-home". |
+| 📵 | **No identifiers.** No advertising ID, no device fingerprint sent anywhere, no user IDs, no cookies. |
+| 🏠 | **Everything stays local.** Every check (root / hooking / cloning / integrity) and the kill decision is computed **on the device** and never leaves it. |
+| 🇪🇺 | **GDPR-ready.** hydra processes no personal data off-device and shares nothing with anyone — it adds **zero** data-collection or third-party data-sharing to your app. |
+
+> [!NOTE]
+> **Full transparency:** the runtime declares `QUERY_ALL_PACKAGES` so it can
+> inspect installed packages for the **cloning check**. That inspection happens
+> **only on-device** and the result is **never transmitted** — it feeds the local
+> kill decision and nothing else.
 
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:00F0FF,100:B026FF&height=3" width="100%"/>
 
@@ -137,9 +164,7 @@ android {
 
 ```kotlin
 hydra {
-    verbose.set(true)                   // log the baking steps during the build
-    enableVpnDetection.set(true)        // inject ACCESS_NETWORK_STATE
-    enableBiometricsDetection.set(true) // inject USE_BIOMETRIC
+    verbose.set(true) // log the baking steps during the build
 }
 ```
 
