@@ -110,15 +110,6 @@ private fun ArcadeScreen() {
                 Spacer(Modifier.height(14.dp))
             }
 
-            Spacer(Modifier.height(10.dp))
-            BasicText(
-                "✓ DECRYPTED IN NATIVE  ·  NOT IN classes.dex",
-                style = TextStyle(
-                    color = Green, fontFamily = FontFamily.Monospace,
-                    fontSize = 11.sp, letterSpacing = 1.sp,
-                    textAlign = TextAlign.Center, shadow = glow(Green),
-                ),
-            )
             Spacer(Modifier.height(20.dp))
             BasicText(
                 "● INSERT COIN ●",
