@@ -241,10 +241,12 @@ device — that is the RASP working as intended.
 
 ## 🎮 &nbsp; TRY THE DEMO
 
-A minimal, runnable host app lives in [`sample/`](sample). It declares two
-`secrets {}` at build time and displays them **decrypted at runtime** via
-`Hydra.secret(...)` — the plaintext is **never** in `classes.dex`, yet it shows
-up on screen. Real device, real round-trip:
+A minimal, runnable host app lives in [`sample/`](sample).
+
+- It declares two `secrets {}` at build time.
+- It displays them **decrypted at runtime** via `Hydra.secret(...)`.
+- The plaintext is **never** in `classes.dex` — yet it shows up on screen.
+- Real device, real round-trip:
 
 <div align="center">
   <img src="art/sample-demo.png" alt="hydra sample — decrypted secrets on screen" width="300"/>
