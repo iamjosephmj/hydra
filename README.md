@@ -288,6 +288,23 @@ A minimal, runnable host app lives in [`sample/`](sample).
 
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:00F0FF,100:FF0080&height=3" width="100%"/>
 
+## 🔜 &nbsp; NEXT LEVELS (Roadmap)
+
+New power-ups loading for future releases — each unlocked the **same way**: it
+only activates on a device that passes the runtime checks.
+
+<div align="center">
+
+| | POWER-UP | STATUS |
+|:--:|:--|:--:|
+| 🗃️ | **Asset encryption** — encrypt bundled assets / resources so they decrypt **only after a clean sweep**. On a rooted / hooked / emulated / cloned / tampered device the process is killed first, so the plaintext asset never reaches disk or screen. | 🟡 `PLANNED` |
+
+</div>
+
+> Want to pitch the next level? **[Open an issue](https://github.com/iamjosephmj/hydra/issues)** 🪙
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:00F0FF,100:B026FF&height=3" width="100%"/>
+
 ## 🏆 &nbsp; HIGH SCORES
 
 <div align="center">
