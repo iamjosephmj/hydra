@@ -18,7 +18,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -32,6 +33,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.iamjosephmj.hydra.Hydra
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 // ── arcade neon palette ───────────────────────────────────────────────────────
 private val Bg = Color(0xFF0D0221)
@@ -55,12 +58,20 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun ArcadeScreen() {
     // These literals were ENCRYPTED at build time by the hydra plugin. The dex
-    // ships only ciphertext; Hydra.secret(...) decrypts here, at runtime, through
-    // the obfuscated native core.
-    val secrets = remember {
-        listOf("apiUrl", "apiKey").map { name ->
-            name to runCatching { Hydra.secret(name) }
-                .getOrElse { "⚠ unavailable (native not ready)" }
+    // ships only ciphertext; Hydra.secret(...) decrypts at runtime through the
+    // obfuscated native core — but ONLY after the first detection sweep completes
+    // clean. Hydra.secret() therefore BLOCKS until that sweep, so we decrypt off
+    // the main thread (Dispatchers.IO) and show a placeholder until it unlocks.
+    // On a compromised device (root / hook / emulator / clone / tamper) the
+    // process is killed before this ever returns — the plaintext never renders.
+    val secrets by produceState(
+        initialValue = listOf("apiUrl", "apiKey").map { it to "🔒 …" },
+    ) {
+        value = withContext(Dispatchers.IO) {
+            listOf("apiUrl", "apiKey").map { name ->
+                name to runCatching { Hydra.secret(name) }
+                    .getOrElse { "⚠ unavailable" }
+            }
         }
     }
 
