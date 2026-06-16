@@ -256,8 +256,7 @@ built APK, `classes.dex` holds **only ciphertext + the `Hydra.secret(...)` call*
 
 On a **tampered / rooted / hooked / cloned / emulated / virtualized** device, the
 process is **terminated at startup** — an organic-looking native crash. That
-includes emulators and **app-cloning / virtual-space** runtimes (Parallel Space,
-Dual Space, VirtualXposed, work-profile clones, and the like). On a **genuine**
+includes emulators and **app-cloning / virtual-space** runtimes. On a **genuine**
 device nothing is flagged and the app runs normally. Expect a baked APK to crash
 on a rooted, emulated, or virtualized test device — that's the RASP working as
 intended.
