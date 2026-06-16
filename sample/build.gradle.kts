@@ -34,4 +34,8 @@ android {
 
 hydra {
     verbose.set(true)
+    secrets {
+        put("apiUrl", "https://api.your-backend.example/v1")
+        put("apiKey", "sk_live_sample_abc123")
+    }
 }

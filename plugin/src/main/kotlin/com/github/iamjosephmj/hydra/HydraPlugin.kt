@@ -1,9 +1,11 @@
 package com.github.iamjosephmj.hydra
 
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import io.ssemaj.deviceintelligence.gradle.DeviceIntelligenceExtension
 import io.ssemaj.deviceintelligence.gradle.DeviceIntelligencePlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.register
 
 /**
  * hydra entry point. Vendors the released DeviceIntelligence 3.0.0 runtime and
@@ -43,6 +45,26 @@ class HydraPlugin : Plugin<Project> {
         injectRuntimeRepo(project)
         project.pluginManager.apply(DeviceIntelligencePlugin::class.java)
         forwardConfig(project, hydra)
+        wireSecrets(project, hydra)
+    }
+
+    /**
+     * Per-variant: generate `Hydra.java` (encrypted named secrets) and add it to
+     * the variant's Java sources so the app can call `Hydra.secret("name")`.
+     */
+    private fun wireSecrets(project: Project, hydra: HydraExtension) {
+        val components = project.extensions
+            .findByType(ApplicationAndroidComponentsExtension::class.java) ?: return
+        components.onVariants { variant ->
+            val cap = variant.name.replaceFirstChar { it.uppercase() }
+            val task = project.tasks.register<GenerateHydraSecretsTask>(
+                "generate${cap}HydraSecrets",
+            ) { secrets.set(hydra.secrets) }
+            variant.sources.java?.addGeneratedSourceDirectory(
+                task,
+                GenerateHydraSecretsTask::outputDir,
+            )
+        }
     }
 
     /** Materialise the vendored AAR + POM into a build-local m2 and register it. */
