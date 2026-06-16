@@ -13,7 +13,7 @@
 </a>
 
 <p>
-  <img src="https://img.shields.io/badge/LICENSE-APACHE_2.0-FF0080?style=for-the-badge&labelColor=0D0221"/>
+  <img src="https://img.shields.io/badge/LICENSE-CC_BY--ND_4.0-FF0080?style=for-the-badge&labelColor=0D0221"/>
   <img src="https://img.shields.io/badge/API-28+-00F0FF?style=for-the-badge&logo=android&logoColor=white&labelColor=0D0221"/>
   <a href="https://jitpack.io/#iamjosephmj/hydra"><img src="https://img.shields.io/jitpack/version/com.github.iamjosephmj/hydra?style=for-the-badge&color=B026FF&labelColor=0D0221&label=JITPACK"/></a>
   <img src="https://img.shields.io/badge/KOTLIN-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white&labelColor=0D0221"/>
@@ -304,18 +304,20 @@ Join the **[stargazers](https://github.com/iamjosephmj/hydra/stargazers)** :star
 
 ## 📜 &nbsp; LICENSE
 
-```xml
-Copyright 2026 Joseph James
+**[Creative Commons Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)](LICENSE)**
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+```text
+Copyright (c) 2026 Joseph James
 
-    https://www.apache.org/licenses/LICENSE-2.0
+You are FREE to USE hydra for any purpose — including COMMERCIALLY — and to
+share VERBATIM copies, with attribution. You may fork and modify it for your
+own use and to contribute back upstream, but you may NOT publish or distribute
+MODIFIED versions.
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Full terms: https://creativecommons.org/licenses/by-nd/4.0/
 ```
+
+> [!NOTE]
+> This is a **source-available** license, not an OSI open-source license — the
+> *NoDerivatives* term intentionally forbids redistributing modified copies.
+> Commercial use and verbatim redistribution are fully permitted.
