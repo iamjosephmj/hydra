@@ -310,24 +310,6 @@ A minimal, runnable host app lives in [`sample/`](sample).
 # → sample/build/outputs/apk/release/sample-release.apk   (RASP-protected)
 ```
 
-<img src="https://capsule-render.vercel.app/api?type=rect&color=0:00F0FF,100:FF0080&height=3" width="100%"/>
-
-## 🔜 &nbsp; NEXT LEVELS (Roadmap)
-
-New power-ups loading for future releases — each unlocked the **same way**: it
-only activates on a device that passes the runtime checks.
-
-<div align="center">
-
-| | POWER-UP | STATUS |
-|:--:|:--|:--:|
-| 🗃️ | **Asset encryption** — encrypt bundled assets so they decrypt only after a clean sweep. *(Now live — see the Encrypted Assets stage above.)* | 🟢 `SHIPPED 1.5.0` |
-| 🛰️ | **Server-gated high-security profile** — opt-in tier where the unlock key is **split with a backend** that releases its half only after hardware-backed remote attestation (Play Integrity), so secrets stay sealed even on a device that fools every local check. Trades the zero-network default for maximum assurance. | 🟡 `PLANNED` |
-
-</div>
-
-> Want to pitch the next level? **[Open an issue](https://github.com/iamjosephmj/hydra/issues)** 🪙
-
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:00F0FF,100:B026FF&height=3" width="100%"/>
 
 ## 🏆 &nbsp; HIGH SCORES
