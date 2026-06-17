@@ -321,7 +321,8 @@ only activates on a device that passes the runtime checks.
 
 | | POWER-UP | STATUS |
 |:--:|:--|:--:|
-| 🗃️ | **Asset encryption** — encrypt bundled assets so they decrypt **only after a clean sweep**. On a rooted / hooked / emulated / cloned / tampered device the process is killed first, so the plaintext asset never reaches disk or screen. *(See the Encrypted Assets stage above.)* | 🟢 `SHIPPED 1.5.0` |
+| 🗃️ | **Asset encryption** — encrypt bundled assets so they decrypt only after a clean sweep. *(Now live — see the Encrypted Assets stage above.)* | 🟢 `SHIPPED 1.5.0` |
+| 🛰️ | **Server-gated high-security profile** — opt-in tier where the unlock key is **split with a backend** that releases its half only after hardware-backed remote attestation (Play Integrity), so secrets stay sealed even on a device that fools every local check. Trades the zero-network default for maximum assurance. | 🟡 `PLANNED` |
 
 </div>
 
