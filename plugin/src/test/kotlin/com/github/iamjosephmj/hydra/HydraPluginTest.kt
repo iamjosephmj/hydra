@@ -24,6 +24,12 @@ class HydraPluginTest {
         // appear, or a consumer secret could leak before the kill (the 1.2.1 fix).
         assertTrue(gen.contains("StrDec.g("), "generated secret accessor must use the gated StrDec.g")
         assertFalse(gen.contains("StrDec.d("), "generated secret accessor must NOT use the ungated StrDec.d")
+        // The asset accessor is a thin facade over the RASP runtime decryptor —
+        // all crypto lives in AssetDec (gated on K.g), never inline in hydra.
+        assertTrue(gen.contains("byte[] asset(Context ctx, String name)"),
+            "generated Hydra must expose asset(Context, name)")
+        assertTrue(gen.contains("AssetDec.g(ctx, name)"),
+            "Hydra.asset must delegate to the RASP runtime AssetDec.g")
     }
     @Test
     fun `applying hydra to a bare project succeeds and creates the hydra extension`(@TempDir dir: File) {

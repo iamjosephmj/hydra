@@ -41,4 +41,23 @@ abstract class HydraExtension {
             backing.put(name, value)
         }
     }
+
+    /**
+     * Asset relative paths (under `assets/`) to encrypt at build time. The
+     * plaintext is removed from the APK; only ciphertext + a per-build seed ship.
+     * Retrieved at runtime via `Hydra.asset(context, "name")`, which decrypts only
+     * after the first clean detection sweep (same gating as [secrets]).
+     */
+    abstract val encryptAssets: SetProperty<String>
+
+    /** DSL sugar: `hydra { encryptAssets { include("config.json") } }`. */
+    fun encryptAssets(action: Action<AssetsHandler>) {
+        action.execute(AssetsHandler(encryptAssets))
+    }
+
+    class AssetsHandler(private val backing: SetProperty<String>) {
+        fun include(vararg paths: String) {
+            for (p in paths) backing.add(p)
+        }
+    }
 }

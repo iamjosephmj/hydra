@@ -1,0 +1,6 @@
+{
+  "feature_flags": { "new_vault_ui": true, "telemetry": false },
+  "api_base": "https://api.your-backend.example/v1",
+  "max_retries": 3,
+  "secret_note": "this whole file is AES-free SHA256-CTR encrypted, gated on a clean sweep"
+}
