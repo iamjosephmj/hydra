@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
@@ -75,6 +76,18 @@ private fun ArcadeScreen() {
         }
     }
 
+    // config.json shipped ENCRYPTED — the plaintext is stripped from the APK at
+    // build time. Hydra.asset(...) decrypts it through the gated whitebox key,
+    // blocking until the first clean sweep (so it runs off the main thread too).
+    // On a compromised device the process is killed before this returns.
+    val ctx = LocalContext.current
+    val assetText by produceState(initialValue = "🔒 …", ctx) {
+        value = withContext(Dispatchers.IO) {
+            runCatching { String(Hydra.asset(ctx, "config.json")) }
+                .getOrElse { "⚠ unavailable" }
+        }
+    }
+
     Box(
         Modifier
             .fillMaxSize()
@@ -120,6 +133,17 @@ private fun ArcadeScreen() {
                 SecretPanel(name, value)
                 Spacer(Modifier.height(14.dp))
             }
+
+            Spacer(Modifier.height(20.dp))
+            BasicText(
+                "═════  ENCRYPTED ASSET  ═════",
+                style = TextStyle(
+                    color = Purple, fontFamily = FontFamily.Monospace,
+                    fontSize = 13.sp, letterSpacing = 1.sp, shadow = glow(Purple),
+                ),
+            )
+            Spacer(Modifier.height(14.dp))
+            SecretPanel("config.json", assetText)
 
             Spacer(Modifier.height(20.dp))
             BasicText(

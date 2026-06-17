@@ -8,11 +8,11 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
 
 /**
- * hydra entry point. Vendors the released DeviceIntelligence 3.4.0 runtime and
+ * hydra entry point. Vendors the released DeviceIntelligence 3.5.0 runtime and
  * delegates the baking to the bundled [DeviceIntelligencePlugin].
  *
  * Self-contained delivery: the bundled plugin auto-adds
- * `implementation("io.ssemaj.rasp:deviceintelligence:3.4.0")`. We extract the
+ * `implementation("io.ssemaj.rasp:deviceintelligence:3.5.0")`. We extract the
  * vendored AAR + a generated POM into a build-local Maven repo under that exact
  * coordinate and register the repo, so the auto-runtime resolves offline with no
  * dependency on the DeviceIntelligenceRASP origin repo.
@@ -21,14 +21,15 @@ class HydraPlugin : Plugin<Project> {
     private companion object {
         const val RUNTIME_GROUP = "io.ssemaj.rasp"
         const val RUNTIME_ARTIFACT = "deviceintelligence"
-        const val RUNTIME_VERSION = "3.4.0"
-        const val AAR_RESOURCE = "/hydra/deviceintelligence-3.4.0.aar"
+        const val RUNTIME_VERSION = "3.5.0"
+        const val AAR_RESOURCE = "/hydra/deviceintelligence-3.5.0.aar"
     }
 
     override fun apply(project: Project) {
         val hydra = project.extensions.create("hydra", HydraExtension::class.java).apply {
             verbose.convention(false)
             encryptStrings.convention(emptySet())
+            encryptAssets.convention(emptySet())
             enableVpnDetection.convention(false)
             enableBiometricsDetection.convention(false)
         }
@@ -82,7 +83,7 @@ class HydraPlugin : Plugin<Project> {
                 aar.outputStream().use { input.copyTo(it) }
             }
         }
-        // The 3.4.0 runtime module declares no dependencies → POM needs none.
+        // The 3.5.0 runtime module declares no dependencies → POM needs none.
         artDir.resolve("$RUNTIME_ARTIFACT-$RUNTIME_VERSION.pom").writeText(
             """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -116,6 +117,7 @@ class HydraPlugin : Plugin<Project> {
         val di = project.extensions.getByType(DeviceIntelligenceExtension::class.java)
         di.verbose.set(hydra.verbose)
         di.encryptStrings.set(hydra.encryptStrings)
+        di.encryptAssets.set(hydra.encryptAssets)
         di.enableVpnDetection.set(hydra.enableVpnDetection)
         di.enableBiometricsDetection.set(hydra.enableBiometricsDetection)
     }

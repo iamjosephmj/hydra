@@ -136,7 +136,7 @@ Apply the plugin in your **app module's `build.gradle.kts`**:
 ```kotlin
 plugins {
     id("com.android.application")
-    id("com.github.iamjosephmj.hydra") version "1.4.0"
+    id("com.github.iamjosephmj.hydra") version "1.5.0"
 }
 ```
 
@@ -182,7 +182,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "com.github.iamjosephmj.hydra") {
-                useModule("com.github.iamjosephmj.hydra:com.github.iamjosephmj.hydra.gradle.plugin:1.4.0")
+                useModule("com.github.iamjosephmj.hydra:com.github.iamjosephmj.hydra.gradle.plugin:1.5.0")
             }
         }
     }
@@ -250,6 +250,37 @@ built APK, `classes.dex` holds **only ciphertext + the `Hydra.secret(...)` call*
 > on an emulator" path, and raises the bar; for high-value secrets, keep them
 > server-side.
 
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:00F0FF,100:B026FF&height=3" width="100%"/>
+
+## ▶ 🗃️ &nbsp; BONUS STAGE — ENCRYPTED ASSETS
+
+Same idea, for **bundled files**. Mark assets and their plaintext is stripped
+from the APK — only ciphertext + a per-build seed ship. They decrypt at runtime
+through the same **sweep-gated** key, so a compromised device is killed before an
+asset ever decrypts.
+
+**1️⃣ List the assets** 💾 (paths relative to `assets/`):
+
+```kotlin
+hydra {
+    encryptAssets { include("config.json", "models/model.tflite") }
+}
+```
+
+**2️⃣ Read the bytes** 🔓 via `Hydra.asset(context, name)` — **off the main
+thread** (it blocks until the first clean sweep, exactly like `Hydra.secret`):
+
+```kotlin
+val bytes = withContext(Dispatchers.IO) { Hydra.asset(context, "config.json") }
+val config = String(bytes)   // your decrypted file
+```
+
+In the built APK there is **no plaintext `config.json`** — only an encrypted blob
+under `assets/di/aenc/` and a manifest. The cipher reuses the runtime's existing
+hash + whitebox key path (SHA-256 counter mode + HMAC-SHA256, keyed by the
+sweep-gated native key — no stock AES), so the key is never shipped and the bytes
+are integrity-checked on decrypt.
+
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:FFD700,100:FF0080&height=3" width="100%"/>
 
 ## 💀 &nbsp; GAME OVER SCREEN (on-device behavior)
@@ -290,7 +321,7 @@ only activates on a device that passes the runtime checks.
 
 | | POWER-UP | STATUS |
 |:--:|:--|:--:|
-| 🗃️ | **Asset encryption** — encrypt bundled assets / resources so they decrypt **only after a clean sweep**. On a rooted / hooked / emulated / cloned / tampered device the process is killed first, so the plaintext asset never reaches disk or screen. | 🟡 `PLANNED` |
+| 🗃️ | **Asset encryption** — encrypt bundled assets so they decrypt **only after a clean sweep**. On a rooted / hooked / emulated / cloned / tampered device the process is killed first, so the plaintext asset never reaches disk or screen. *(See the Encrypted Assets stage above.)* | 🟢 `SHIPPED 1.5.0` |
 
 </div>
 
