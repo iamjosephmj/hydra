@@ -105,10 +105,21 @@ no one home.
 | 🇪🇺 | **GDPR-ready.** hydra processes no personal data off-device and shares nothing with anyone — it adds **zero** data-collection or third-party data-sharing to your app. |
 
 > [!NOTE]
-> **Full transparency:** the runtime declares `QUERY_ALL_PACKAGES` so it can
-> inspect installed packages for the **cloning check**. That inspection happens
-> **only on-device** and the result is **never transmitted** — it feeds the local
-> kill decision and nothing else.
+> **`QUERY_ALL_PACKAGES` disclosure.** The vendored runtime declares the
+> `android.permission.QUERY_ALL_PACKAGES` permission (it merges into your app via
+> the AAR manifest). It is used **only on-device** to enumerate installed packages
+> for tamper detection — the **app-cloning / virtual-space** check and detecting
+> known **root / attestation-spoofer manager** apps (Magisk, KernelSU, etc.). The
+> result feeds the local kill decision and is **never transmitted, stored, or
+> shared** (the runtime has no `INTERNET` permission — it cannot send it anywhere).
+>
+> **If you publish on Google Play:** `QUERY_ALL_PACKAGES` is a *sensitive* permission.
+> Because your APK will carry it, you must declare its use in the **Play Console**
+> ("Manage all apps" / permission declaration) and justify it under an allowed use
+> case — **anti-fraud / security and anti-abuse** applies here. Apps that carry it
+> without an approved declaration can be rejected. If you cannot use it, you can
+> strip it from the merged manifest (`tools:node="remove"`) and add a fixed
+> `<queries>` list instead — at the cost of reduced cloning / root-manager coverage.
 
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:00F0FF,100:B026FF&height=3" width="100%"/>
 
