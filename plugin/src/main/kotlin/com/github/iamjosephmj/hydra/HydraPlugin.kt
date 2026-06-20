@@ -8,11 +8,11 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
 
 /**
- * hydra entry point. Vendors the released DeviceIntelligence 3.7.0 runtime and
+ * hydra entry point. Vendors the released DeviceIntelligence 3.8.0 runtime and
  * delegates the baking to the bundled [DeviceIntelligencePlugin].
  *
  * Self-contained delivery: the bundled plugin auto-adds
- * `implementation("io.ssemaj.rasp:deviceintelligence:3.7.0")`. We extract the
+ * `implementation("io.ssemaj.rasp:deviceintelligence:3.8.0")`. We extract the
  * vendored AAR + a generated POM into a build-local Maven repo under that exact
  * coordinate and register the repo, so the auto-runtime resolves offline with no
  * dependency on the DeviceIntelligenceRASP origin repo.
@@ -21,8 +21,8 @@ class HydraPlugin : Plugin<Project> {
     private companion object {
         const val RUNTIME_GROUP = "io.ssemaj.rasp"
         const val RUNTIME_ARTIFACT = "deviceintelligence"
-        const val RUNTIME_VERSION = "3.7.0"
-        const val AAR_RESOURCE = "/hydra/deviceintelligence-3.7.0.aar"
+        const val RUNTIME_VERSION = "3.8.0"
+        const val AAR_RESOURCE = "/hydra/deviceintelligence-3.8.0.aar"
     }
 
     override fun apply(project: Project) {
@@ -83,7 +83,7 @@ class HydraPlugin : Plugin<Project> {
                 aar.outputStream().use { input.copyTo(it) }
             }
         }
-        // The 3.7.0 runtime module declares no dependencies → POM needs none.
+        // The 3.8.0 runtime module declares no dependencies → POM needs none.
         artDir.resolve("$RUNTIME_ARTIFACT-$RUNTIME_VERSION.pom").writeText(
             """
             <?xml version="1.0" encoding="UTF-8"?>
