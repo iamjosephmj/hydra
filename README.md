@@ -13,6 +13,10 @@
 </a>
 
 <p>
+  <a href="https://buymeacoffee.com/iamjosephmy"><img src="https://img.shields.io/badge/%E2%98%95%20BUY%20ME%20A%20COFFEE-INSERT%20COIN-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black&labelColor=0D0221"/></a>
+</p>
+
+<p>
   <img src="https://img.shields.io/badge/LICENSE-CC_BY--ND_4.0-FF0080?style=for-the-badge&labelColor=0D0221"/>
   <img src="https://img.shields.io/badge/API-28+-00F0FF?style=for-the-badge&logo=android&logoColor=white&labelColor=0D0221"/>
   <a href="https://jitpack.io/#iamjosephmj/hydra"><img src="https://img.shields.io/jitpack/version/com.github.iamjosephmj/hydra?style=for-the-badge&color=B026FF&labelColor=0D0221&label=JITPACK"/></a>
