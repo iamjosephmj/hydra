@@ -313,17 +313,8 @@ hydra {
 }
 ```
 
-What changes: the plugin bakes the integrity fingerprint into the **AAB** and
-re-signs the bundle (the per-APK instrument step is skipped — the two are
-mutually exclusive). On-device, the runtime hashes the **decompressed**
-`classes*.dex` and `lib/<abi>/` native libraries across the base APK **and every
-split**, and checks the installed signer is a **member** of the baked allow-set.
-Tamper with a dex or `.so` in any split → **GAME OVER**.
-
-> **Honest limitation:** resource/manifest byte-hashing is dropped in bundle mode
-> (Play rewrites `resources.pb` → `resources.arsc`, so a byte hash could never
-> match). Those are covered *transitively* by the signer pin; dex + native code
-> tampering is still caught directly.
+Tamper with a dex or `.so` in any split → **GAME OVER**. (Resources/manifest are
+covered by the signer pin rather than a byte hash.)
 
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:FFD700,100:FF0080&height=3" width="100%"/>
 
