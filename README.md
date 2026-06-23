@@ -13,7 +13,7 @@
 </a>
 
 <p>
-  <a href="https://buymeacoffee.com/iamjosephmy"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="320"/></a>
+  <a href="https://buymeacoffee.com/iamjosephmy"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="240"/></a>
 </p>
 
 <p>
