@@ -60,4 +60,31 @@ abstract class HydraExtension {
             for (p in paths) backing.add(p)
         }
     }
+
+    /**
+     * Opt-in App Bundle integrity ("bundle mode") for apps shipped as `.aab`
+     * through Play. Forwarded onto `deviceintelligence { appBundle { ... } }`.
+     */
+    @get:org.gradle.api.tasks.Nested
+    abstract val appBundle: HydraAppBundleOptions
+
+    /** DSL sugar: `hydra { appBundle { enabled = true; playSigningCertSha256("...") } }`. */
+    fun appBundle(action: Action<HydraAppBundleOptions>) = action.execute(appBundle)
+
+    abstract class HydraAppBundleOptions {
+        /** Enable bundle mode for AAB builds. Default `false`. */
+        abstract val enabled: Property<Boolean>
+
+        /**
+         * Play App Signing cert SHA-256(s) to pin (normalized to lowercase hex,
+         * `:` stripped). Copy from Play Console → App integrity → App signing key
+         * certificate. The upload-key signer is added automatically.
+         */
+        abstract val playSigningCertSha256: SetProperty<String>
+
+        /** DSL sugar: `appBundle { playSigningCertSha256("AB:CD:...") }`. */
+        fun playSigningCertSha256(vararg hex: String) {
+            for (h in hex) playSigningCertSha256.add(h.replace(":", "").lowercase())
+        }
+    }
 }

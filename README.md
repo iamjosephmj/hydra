@@ -294,6 +294,39 @@ are integrity-checked on decrypt.
 
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:FFD700,100:FF0080&height=3" width="100%"/>
 
+## ▶ 📦 &nbsp; BONUS STAGE — APP BUNDLE (bundle mode)
+
+Shipping an **Android App Bundle (`.aab`)** through Play? Google splits,
+re-encodes, and re-signs your APKs on the way to the device, which would make a
+normal byte-for-byte APK check false-positive. Turn on **bundle mode** instead —
+integrity that survives Play's pipeline:
+
+```kotlin
+hydra {
+    appBundle {
+        enabled = true
+        // Play App Signing re-signs delivered APKs with the app signing key, so
+        // pin its SHA-256 (Play Console → App integrity → App signing key
+        // certificate). Your upload-key signer is added automatically.
+        playSigningCertSha256("AB:CD:EF:...")
+    }
+}
+```
+
+What changes: the plugin bakes the integrity fingerprint into the **AAB** and
+re-signs the bundle (the per-APK instrument step is skipped — the two are
+mutually exclusive). On-device, the runtime hashes the **decompressed**
+`classes*.dex` and `lib/<abi>/` native libraries across the base APK **and every
+split**, and checks the installed signer is a **member** of the baked allow-set.
+Tamper with a dex or `.so` in any split → **GAME OVER**.
+
+> **Honest limitation:** resource/manifest byte-hashing is dropped in bundle mode
+> (Play rewrites `resources.pb` → `resources.arsc`, so a byte hash could never
+> match). Those are covered *transitively* by the signer pin; dex + native code
+> tampering is still caught directly.
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:FFD700,100:FF0080&height=3" width="100%"/>
+
 ## 💀 &nbsp; GAME OVER SCREEN (on-device behavior)
 
 On a **tampered / rooted / hooked / cloned / emulated / virtualized** device, the
