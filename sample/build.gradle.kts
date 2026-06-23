@@ -75,4 +75,12 @@ hydra {
     encryptAssets {
         include("config.json")
     }
+    // App Bundle ("bundle mode") integrity — the sample ships as an `.aab`.
+    appBundle {
+        enabled = true
+        // In production, paste the Play App Signing cert SHA-256 (Play Console →
+        // App integrity). For this local sample we pin a placeholder; the demo
+        // keystore's own signer is auto-included so local installs still pass.
+        playSigningCertSha256("AB:CD:EF")
+    }
 }
