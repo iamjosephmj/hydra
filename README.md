@@ -13,7 +13,7 @@
 </a>
 
 <p>
-  <a href="https://buymeacoffee.com/iamjosephmy"><img src="https://img.shields.io/badge/%E2%98%95%20BUY%20ME%20A%20COFFEE-INSERT%20COIN-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black&labelColor=0D0221"/></a>
+  <a href="https://buymeacoffee.com/iamjosephmy"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="320"/></a>
 </p>
 
 <p>
