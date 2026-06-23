@@ -313,9 +313,6 @@ hydra {
 }
 ```
 
-Tamper with a dex or `.so` in any split → **GAME OVER**. (Resources/manifest are
-covered by the signer pin rather than a byte hash.)
-
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:FFD700,100:FF0080&height=3" width="100%"/>
 
 ## 💀 &nbsp; GAME OVER SCREEN (on-device behavior)
