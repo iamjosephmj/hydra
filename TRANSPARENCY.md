@@ -188,6 +188,35 @@ the cost of reduced clone/root-manager coverage.
 
 ---
 
+## 6. Inspectable artifacts (in this repo)
+
+Committed evidence you can read and re-derive yourself, under
+[`transparency/`](transparency/):
+
+- **[`libdicore-arm64-imports.txt`](transparency/libdicore-arm64-imports.txt)** —
+  the complete list of external functions the shipped arm64 core calls, dumped
+  from the real `libdicore.so` with `llvm-readelf`. This is the ground truth for
+  §2: no resolver, no `send`/`recv`, only loopback `socket`/`connect` +
+  `socketpair`.
+- **[`SBOM.md`](transparency/SBOM.md)** — the software bill of materials: your
+  logic plus exactly two vendored libraries (mbed TLS 3.6.2, miniz 3.0.2), with
+  licenses. No analytics, networking, crash-reporting, or identifier library.
+- **[`syscall-surface.md`](transparency/syscall-surface.md)** — the capability
+  ceiling: the raw syscalls it issues (file I/O only) and what it reaches through
+  libc (self-only `ptrace`, loopback-only sockets).
+- **[`verify-network-silence.sh`](transparency/verify-network-silence.sh)** — a
+  script that re-derives the static network proof from any `libdicore.so`, plus
+  the device commands to watch it live where your environment permits a trace.
+
+> Note on live syscall traces: capturing one depends on the device (a `strace`
+> binary, a debuggable build, or an ftrace path not owned by Perfetto, plus a
+> *clean* device where the app isn't killed on launch). The **static import
+> proof above does not depend on any of that** — it shows the capability is
+> absent in the binary, which is strictly stronger than a trace that merely
+> fails to exercise it.
+
+---
+
 ## Honest limitations
 
 - **The shipped `libdicore.so` is closed and obfuscated today.** This page proves
