@@ -101,6 +101,10 @@ over *"perfect protection, skipped."*
 hydra is **100% on-device**. It collects nothing, transmits nothing, and phones
 no one home.
 
+> **Don't trust it — verify it.** See **[TRANSPARENCY.md](TRANSPARENCY.md)** for
+> the no-`INTERNET` proof (one command), exactly what the native core reads, and
+> how to confirm it stays silent on the wire.
+
 | ✔ | &nbsp; |
 |:--:|:--|
 | 🚫 | **No network calls.** The runtime declares **no `INTERNET` permission** — it *physically cannot* transmit. No telemetry, no analytics, no crash-reporting SDK, no "phone-home". |
