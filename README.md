@@ -129,6 +129,13 @@ no one home.
 > strip it from the merged manifest (`tools:node="remove"`) and add a fixed
 > `<queries>` list instead — at the cost of reduced cloning / root-manager coverage.
 
+> [!TIP]
+> **Want to audit the *rest* of your app's network?** hydra is silent, but your
+> other SDKs (analytics, ads, crash reporting) aren't. **[Poseidon](https://github.com/iamjosephmj/Poseidon)**
+> — a separate, optional hobby project of mine — gives per-SDK egress control and
+> audit trails (enforce or monitor, no VPN/root). See
+> [TRANSPARENCY.md §7](TRANSPARENCY.md#7-want-to-watch-the-rest-of-your-apps-network-optional-unrelated).
+
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:00F0FF,100:B026FF&height=3" width="100%"/>
 
 ## ▶ 🪙 &nbsp; STAGE 1 — INSERT COIN (Download)
