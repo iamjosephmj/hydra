@@ -217,6 +217,42 @@ Committed evidence you can read and re-derive yourself, under
 
 ---
 
+## 7. Want to watch the *rest* of your app's network? (optional, unrelated)
+
+Everything above is about hydra's own (non-)network behaviour. But hydra proving
+*it* is silent doesn't tell you what the **other** SDKs in your app are doing —
+your analytics, ad, and crash-reporting dependencies still open their own
+sockets, and those are the ones you usually want to audit in production.
+
+If that's the gap you care about, you may find **[Poseidon](https://github.com/iamjosephmj/Poseidon)**
+useful. It's a **separate hobby project of mine** — *not* a dependency of hydra
+and not required to use it — that gives an Android app **per-SDK network egress
+control**: you declare which hosts each library is allowed to reach (manifest
+allow-lists with wildcards / CIDR ranges) and Poseidon either **enforces**
+(blocks disallowed connections) or **monitors** (logs them without blocking).
+
+What makes it relevant to *this* page is the auditing angle:
+
+- It covers three layers — JVM HTTP clients (OkHttp, `HttpURLConnection`) via
+  build-time bytecode weaving, native C/C++ via ELF interposition, and raw
+  syscall / Go traffic via seccomp gating.
+- Every decision is logged with the **host, path, the decision, and the reason**
+  (allowed / blocked by host / path / CIDR), and you can route those to your own
+  metrics sink instead of Logcat — so you get a **per-SDK audit trail** of what
+  your app actually talks to in prod.
+- It needs **no VPN and no root**.
+
+Same honesty caveat applies as everywhere else here: Poseidon gives strong
+*default-deny egress control for ordinary SDKs*; it is not a defence against code
+deliberately written to evade it. Treat it as visibility and policy for your
+dependency graph, not as an unbreakable guarantee.
+
+It's entirely optional and lives in its own repo — mentioned here only because
+"how do I actually see/audit network traffic in prod" is the natural next
+question after "hydra itself sends nothing."
+
+---
+
 ## Honest limitations
 
 - **The shipped `libdicore.so` is closed and obfuscated today.** This page proves
