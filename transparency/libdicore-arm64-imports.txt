@@ -1,5 +1,5 @@
-# Imported (UND) dynamic symbols of libdicore.so (arm64-v8a, DeviceIntelligence 4.1.0)
-# Describes libdicore.so (arm64-v8a) with SHA-256: 4403888dea85bea1f0190e781b6401c5b77daa63e261cdb48b4069e36b26d4ce
+# Imported (UND) dynamic symbols of libdicore.so (arm64-v8a, DeviceIntelligence 4.2.0)
+# Describes libdicore.so (arm64-v8a) with SHA-256: 06e3f8f4d4338252f8be193050cf4d6be7d872e572c51e394399095ff8f72b27
 # Generated with: llvm-readelf --dyn-syms libdicore.so | awk '$7=="UND"'
 # This is the COMPLETE list of external functions the shipped native core calls.
 # Network-relevant: socket/connect/socketpair present (loopback probe + local IPC);
@@ -96,6 +96,7 @@ strerror_r
 strlen
 __strlen_chk
 strncmp
+strncpy
 __strncpy_chk2
 strrchr
 __strrchr_chk
