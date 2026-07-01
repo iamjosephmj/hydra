@@ -6,10 +6,7 @@
   nothing. This is the transparency/audit posture: it shows what the app (and any
   bundled SDK) actually talks to, without changing behaviour.
 
-  The single <allow> below is documentary only. In monitor mode nothing is
-  enforced; to actually block off-list hosts, switch mode to "enforce".
+  No <allow> hosts are declared: in monitor mode nothing is enforced anyway. To
+  actually block off-list hosts, switch mode to "enforce" and add <allow> rules.
 -->
-<poseidon mode="monitor">
-    <!-- The backend the encrypted config.json points at (api_base). -->
-    <allow host="api.your-backend.example" />
-</poseidon>
+<poseidon mode="monitor" />
