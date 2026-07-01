@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Transparency: the sample now declares INTERNET so Poseidon has an egress
+         surface to audit. The app itself still makes no network calls; the audit
+         panel proves that on-device. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:name=".HydraSampleApp"
         android:label="Hydra"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@android:style/Theme.Material.NoActionBar">
+
+        <!-- Poseidon egress policy: monitor mode (watch, never block). -->
+        <meta-data
+            android:name="tech.ssemaj.poseidon.policy"
+            android:resource="@xml/poseidon_policy" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
