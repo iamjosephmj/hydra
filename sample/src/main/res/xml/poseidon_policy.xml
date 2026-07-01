@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Poseidon egress policy for the hydra sample.
+
+  mode="monitor" — Poseidon WATCHES and LOGS every outbound connection but blocks
+  nothing. This is the transparency/audit posture: it shows what the app (and any
+  bundled SDK) actually talks to, without changing behaviour.
+
+  No <allow> hosts are declared: in monitor mode nothing is enforced anyway. To
+  actually block off-list hosts, switch mode to "enforce" and add <allow> rules.
+-->
+<poseidon mode="monitor" />

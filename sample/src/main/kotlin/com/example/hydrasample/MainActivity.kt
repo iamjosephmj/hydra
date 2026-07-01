@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
@@ -145,6 +146,30 @@ private fun ArcadeScreen() {
             Spacer(Modifier.height(14.dp))
             SecretPanel("config.json", assetText)
 
+            Spacer(Modifier.height(28.dp))
+            BasicText(
+                "◈  OUTBOUND EGRESS AUDIT  ◈",
+                style = TextStyle(
+                    color = Purple, fontFamily = FontFamily.Monospace,
+                    fontSize = 13.sp, letterSpacing = 1.sp, shadow = glow(Purple),
+                ),
+            )
+            Spacer(Modifier.height(6.dp))
+            BasicText(
+                "poseidon · monitor mode",
+                style = TextStyle(
+                    color = Cyan, fontFamily = FontFamily.Monospace,
+                    fontSize = 10.sp, letterSpacing = 2.sp,
+                ),
+            )
+            Spacer(Modifier.height(14.dp))
+
+            // Poseidon logs every outbound connection here (host / tier / decision).
+            // The sample makes no network calls of its own, so this stays empty —
+            // a live, on-device proof that the app is silent on the wire.
+            val egress by EgressLog.flow.collectAsState()
+            EgressPanel(egress)
+
             Spacer(Modifier.height(20.dp))
             BasicText(
                 "● INSERT COIN ●",
@@ -182,6 +207,53 @@ private fun SecretPanel(name: String, value: String) {
                     fontSize = 14.sp, shadow = glow(Cyan),
                 ),
             )
+        }
+    }
+}
+
+@Composable
+private fun EgressPanel(entries: List<EgressEntry>) {
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .border(2.dp, Cyan, RoundedCornerShape(6.dp))
+            .background(Panel, RoundedCornerShape(6.dp))
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+    ) {
+        if (entries.isEmpty()) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                BasicText(
+                    "▓ NO EGRESS OBSERVED ▓",
+                    style = TextStyle(
+                        color = Green, fontFamily = FontFamily.Monospace,
+                        fontSize = 13.sp, fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp, shadow = glow(Green),
+                    ),
+                )
+                Spacer(Modifier.height(4.dp))
+                BasicText(
+                    "SILENT ON THE WIRE",
+                    style = TextStyle(
+                        color = Cyan, fontFamily = FontFamily.Monospace,
+                        fontSize = 10.sp, letterSpacing = 3.sp,
+                    ),
+                )
+            }
+        } else {
+            Column {
+                entries.forEach { e ->
+                    BasicText(
+                        "[${e.tier}] ${e.host} → ${if (e.blocked) "BLOCK" else "ALLOW"}",
+                        style = TextStyle(
+                            color = if (e.blocked) Magenta else Green,
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 12.sp,
+                            shadow = glow(if (e.blocked) Magenta else Green),
+                        ),
+                    )
+                    Spacer(Modifier.height(6.dp))
+                }
+            }
         }
     }
 }
