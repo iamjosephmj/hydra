@@ -3,11 +3,27 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.github.iamjosephmj.hydra")
+    // Poseidon — per-SDK outbound-egress audit. Applying it weaves outbound
+    // network calls at build time and auto-adds the runtime; no `implementation`
+    // line needed. The plugin runs before hydra bakes the assembled APK.
+    id("tech.ssemaj.poseidon") version "0.1.4"
+}
+
+// Hydra runs Gradle in PREFER_PROJECT repository mode (it injects a build-local
+// runtime repo at the project level), which makes the sample ignore the
+// settings-level repositories. Declare Poseidon's runtime sources here so the
+// auto-added `poseidon-all` AAR resolves for this module.
+repositories {
+    mavenLocal()
+    maven("https://jitpack.io")
+    google()
+    mavenCentral()
 }
 
 android {
     namespace = "com.example.hydrasample"
-    compileSdk = 36
+    // Poseidon 0.1.4's runtime AARs require compiling against API 37.
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.hydrasample"
@@ -83,4 +99,17 @@ hydra {
         // keystore's own signer is auto-included so local installs still pass.
         playSigningCertSha256("AB:CD:EF")
     }
+}
+
+// Poseidon egress-audit coverage. Full tier: JVM HTTP clients + native libc
+// (ELF interposition) + raw syscall / Go traffic (seccomp).
+//
+// NOTE: the native tier rewrites `.so` files and installs a seccomp filter at
+// process start. Hydra bakes a native integrity baseline and kills on tamper —
+// this combo MUST be verified on a clean physical device. If the baked release
+// crashes at startup, flip `injectNative` to false (JVM-only, Play-clean) and
+// retest. See docs/superpowers/specs/2026-07-01-poseidon-egress-audit-design.md.
+poseidon {
+    injectNative = true          // guard native-library (libc) + Go/syscall traffic
+    nativeDnsCorrelation = true  // map bare-IP native connections back to hostnames
 }
