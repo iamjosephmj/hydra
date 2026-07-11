@@ -19,7 +19,7 @@
 <p>
   <img src="https://img.shields.io/badge/LICENSE-CC_BY--ND_4.0-FF0080?style=for-the-badge&labelColor=0D0221"/>
   <img src="https://img.shields.io/badge/API-28+-00F0FF?style=for-the-badge&logo=android&logoColor=white&labelColor=0D0221"/>
-  <a href="https://jitpack.io/#iamjosephmj/hydra"><img src="https://img.shields.io/jitpack/version/com.github.iamjosephmj/hydra?style=for-the-badge&color=B026FF&labelColor=0D0221&label=JITPACK"/></a>
+  <a href="https://central.sonatype.com/artifact/tech.thessemaj/hydra"><img src="https://img.shields.io/maven-central/v/tech.thessemaj/hydra?style=for-the-badge&color=B026FF&labelColor=0D0221&label=MAVEN%20CENTRAL"/></a>
   <img src="https://img.shields.io/badge/KOTLIN-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white&labelColor=0D0221"/>
   <img src="https://img.shields.io/badge/GRADLE-02303A?style=for-the-badge&logo=gradle&logoColor=00F0FF&labelColor=0D0221"/>
 </p>
@@ -140,20 +140,31 @@ no one home.
 
 ## ▶ 🪙 &nbsp; STAGE 1 — INSERT COIN (Download)
 
-[![JitPack](https://img.shields.io/jitpack/version/com.github.iamjosephmj/hydra?style=for-the-badge&color=FFD700&labelColor=0D0221&label=GET%20IT%20ON%20JITPACK)](https://jitpack.io/#iamjosephmj/hydra)
+[![Maven Central](https://img.shields.io/maven-central/v/tech.thessemaj/hydra?style=for-the-badge&color=FFD700&labelColor=0D0221&label=MAVEN%20CENTRAL)](https://central.sonatype.com/artifact/tech.thessemaj/hydra)
 
-Add the repository in your **`settings.gradle.kts`**:
+hydra ships on **Maven Central** — make sure `mavenCentral()` is in your
+plugin repositories in **`settings.gradle.kts`** (most projects already have
+this):
 
 ```kotlin
 pluginManagement {
     repositories {
-        maven("https://jitpack.io")
         google()
         mavenCentral()
         gradlePluginPortal()
     }
 }
 ```
+
+<details>
+<summary>Legacy: JitPack (plugin id <code>com.github.iamjosephmj.hydra</code>, ≤ 2.2.0)</summary>
+
+Existing JitPack consumers keep working unchanged — add
+`maven("https://jitpack.io")` to `pluginManagement.repositories` and use the
+legacy plugin id `com.github.iamjosephmj.hydra`. New integrations should use
+Maven Central.
+
+</details>
 
 ## ▶ 🕹️ &nbsp; STAGE 2 — START GAME (Integrate)
 
@@ -162,7 +173,7 @@ Apply the plugin in your **app module's `build.gradle.kts`**:
 ```kotlin
 plugins {
     id("com.android.application")
-    id("com.github.iamjosephmj.hydra") version "2.2.0"
+    id("tech.thessemaj.hydra") version "2.3.0"
 }
 ```
 

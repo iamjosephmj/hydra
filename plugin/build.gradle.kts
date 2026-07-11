@@ -1,11 +1,18 @@
+import com.vanniktech.maven.publish.GradlePlugin
+import com.vanniktech.maven.publish.JavadocJar
+
 plugins {
     `kotlin-dsl`
     `java-gradle-plugin`
     `maven-publish`
+    id("com.vanniktech.maven.publish") version "0.34.0"
 }
 
-group = "com.github.iamjosephmj"
-version = "2.2.0"
+// Maven Central coordinates live under the verified tech.thessemaj namespace.
+// JitPack consumers are unaffected: it archives whatever the build publishes
+// and keeps serving historical tags built with the old group.
+group = "tech.thessemaj"
+version = findProperty("VERSION_NAME")?.toString() ?: "2.3.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -57,6 +64,56 @@ gradlePlugin {
             implementationClass = "com.github.iamjosephmj.hydra.HydraPlugin"
             displayName = "hydra"
             description = "Bake DeviceIntelligence RASP checks into any Android app with one plugin id."
+        }
+        // Maven Central id: plugin-marker groups must sit under a verified
+        // namespace, and com.github.* is not allowed there. Same plugin class;
+        // the legacy id above keeps existing JitPack consumers working.
+        create("hydraCentral") {
+            id = "tech.thessemaj.hydra"
+            implementationClass = "com.github.iamjosephmj.hydra.HydraPlugin"
+            displayName = "hydra"
+            description = "Bake DeviceIntelligence RASP checks into any Android app with one plugin id."
+        }
+    }
+}
+
+// The legacy com.github.* plugin marker must never reach Maven Central —
+// that namespace is disallowed there and would fail the whole deployment.
+// It still publishes locally, so JitPack keeps serving the legacy id.
+tasks.withType<PublishToMavenRepository>().configureEach {
+    onlyIf { !(publication.name == "hydraPluginMarkerMaven" && repository.name == "mavenCentral") }
+}
+
+mavenPublishing {
+    configure(GradlePlugin(javadocJar = JavadocJar.Javadoc(), sourcesJar = true))
+    publishToMavenCentral(automaticRelease = true)
+    // Sign only when a key is supplied (CI) — JitPack's keyless
+    // publishToMavenLocal must keep working.
+    if (providers.gradleProperty("signingInMemoryKey").isPresent) {
+        signAllPublications()
+    }
+    coordinates("tech.thessemaj", "hydra", version.toString())
+    pom {
+        name = "hydra"
+        description = "Bake DeviceIntelligence RASP checks into any Android app with one plugin id."
+        url = "https://github.com/iamjosephmj/hydra"
+        licenses {
+            license {
+                name = "CC BY-ND 4.0"
+                url = "https://creativecommons.org/licenses/by-nd/4.0/legalcode"
+            }
+        }
+        developers {
+            developer {
+                id = "iamjosephmj"
+                name = "Joseph MJ"
+                url = "https://github.com/iamjosephmj"
+            }
+        }
+        scm {
+            url = "https://github.com/iamjosephmj/hydra"
+            connection = "scm:git:git://github.com/iamjosephmj/hydra.git"
+            developerConnection = "scm:git:ssh://git@github.com/iamjosephmj/hydra.git"
         }
     }
 }
