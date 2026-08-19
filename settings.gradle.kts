@@ -10,14 +10,14 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
-    // The plugin publishes under group `tech.ssemaj.poseidon`, module
-    // `poseidon-gradle-plugin` — map the id to that concrete coordinate so
-    // `id("tech.ssemaj.poseidon")` resolves from mavenLocal.
+    // Poseidon is published to Maven Central: the `tech.ssemaj.poseidon` plugin
+    // marker redirects to the implementation module `tech.thessemaj:poseidon-gradle-plugin`.
+    // Map the id to that concrete coordinate so it resolves from mavenCentral (or mavenLocal).
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "tech.ssemaj.poseidon") {
-                val version = requested.version ?: "0.1.4"
-                useModule("tech.ssemaj.poseidon:poseidon-gradle-plugin:$version")
+                val version = requested.version ?: "0.2.0"
+                useModule("tech.thessemaj:poseidon-gradle-plugin:$version")
             }
         }
     }
