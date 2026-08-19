@@ -6,7 +6,7 @@ plugins {
     // Poseidon — per-SDK outbound-egress audit. Applying it weaves outbound
     // network calls at build time and auto-adds the runtime; no `implementation`
     // line needed. The plugin runs before hydra bakes the assembled APK.
-    id("tech.ssemaj.poseidon") version "0.1.4"
+    id("tech.ssemaj.poseidon") version "0.2.0"
 }
 
 // Hydra runs Gradle in PREFER_PROJECT repository mode (it injects a build-local
@@ -22,7 +22,7 @@ repositories {
 
 android {
     namespace = "com.example.hydrasample"
-    // Poseidon 0.1.4's runtime AARs require compiling against API 37.
+    // Poseidon 0.2.0's runtime AARs require compiling against API 37.
     compileSdk = 37
 
     defaultConfig {
