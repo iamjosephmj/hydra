@@ -1,0 +1,6 @@
+id=hydra_neutralize
+name=hydra Neutralize (adversarial)
+version=v0.1
+versionCode=1
+author=hydra adversarial suite
+description=Research ONLY. Bind-mounts a patched native lib over com.example.hydrasample to test on-disk lib replacement. Inert unless payload/libdicore.so is present. Do NOT ship.

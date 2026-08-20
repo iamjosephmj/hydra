@@ -1,0 +1,6 @@
+<resources>
+    <!-- LSPosed Manager pre-fills the scope picker with this list. -->
+    <string-array name="xposed_scope">
+        <item>com.example.hydrasample</item>
+    </string-array>
+</resources>
