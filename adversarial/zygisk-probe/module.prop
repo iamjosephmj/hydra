@@ -1,0 +1,6 @@
+id=hydra_zygisk_probe
+name=hydra Zygisk Probe (adversarial)
+version=v0.1
+versionCode=1
+author=hydra adversarial suite
+description=Research ONLY. Native Zygisk module that patches the protected lib's .text IN MEMORY in com.example.hydrasample (setprop hydra.zygisk.mode probe|text-tamper). No-op for every other app. Do NOT ship.
