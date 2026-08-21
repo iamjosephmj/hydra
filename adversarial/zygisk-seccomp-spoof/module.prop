@@ -1,0 +1,6 @@
+id=di_rt_seccomp
+name=DI red-team — seccomp /proc interception
+version=v1
+versionCode=1
+author=redteam
+description=Installs a SECCOMP_RET_USER_NOTIF filter on com.example.hydrasample and intercepts /proc/self/{maps,status,mounts} reads at the kernel boundary (below libc + raw SVC). Inert for other apps.

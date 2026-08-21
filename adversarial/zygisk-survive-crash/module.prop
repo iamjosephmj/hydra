@@ -1,0 +1,6 @@
+id=di_rt_survive_crash
+name=DI red-team — survive-crash stress test
+version=v1
+versionCode=1
+author=redteam
+description=Attacks the enforcement kill path (catch signals / kill watchdog / deny ptrace) against com.example.hydrasample to measure crash-survival. Inert for every other app.
