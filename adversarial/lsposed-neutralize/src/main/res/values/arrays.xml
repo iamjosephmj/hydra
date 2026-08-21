@@ -1,0 +1,5 @@
+<resources>
+    <string-array name="xposed_scope">
+        <item>com.example.hydrasample</item>
+    </string-array>
+</resources>

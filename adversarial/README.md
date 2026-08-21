@@ -12,8 +12,22 @@ is the same — the protected app **does not survive launch**.
 | 2 | **Zygisk** (`zygisk-probe/`) | a native Zygisk module patches the protected lib's `.text` **in memory** at process start (the deepest on-device tamper) | live-code-hash mismatch → **killed** |
 | 3 | **KernelSU module** (`ksu-module/`) | a KSU/Magisk module **bind-mounts** a patched native lib over the app's on-disk one | replaced lib fails self-integrity → **killed** |
 | 4 | **LSPosed** (`lsposed-module/`) | an in-process ART method hook at Zygote fork — no frida artifacts | ART hook detected → **killed** |
-| 5 | **Crash-survival** (kill-path stress test) | after detection fires, an in-process native attacker tries to *survive the kill*: catch the fault signals (`SIGSEGV`/`SIGBUS`/`SIGABRT`) and `siglongjmp` past the in-process detonate, `SIGKILL` the forked watchdog on a tight loop, and race `PR_SET_DUMPABLE(0)` to deny its `ptrace` attach | the layered kill still wins → **killed** (see "Beyond detection" below) |
-| 6 | **seccomp `/proc` spoofing** | a `SECCOMP_RET_USER_NOTIF` filter + root supervisor intercepts the `openat` reads of `/proc/self/{maps,status,mounts}` at the kernel boundary — below libc **and** raw `SVC` — and hands back a scrubbed copy, hiding injected libs / hooks from the RASP's introspection | the loader's in-memory view (`dl_iterate_phdr`) can't be spoofed and disagrees with the doctored maps → **killed** (see "Beyond hooking" below) |
+| 5 | **Crash-survival** (`zygisk-survive-crash/`) | after detection fires, an in-process native attacker tries to *survive the kill*: catch the fault signals (`SIGSEGV`/`SIGBUS`/`SIGABRT`) and `siglongjmp` past the in-process detonate, `SIGKILL` the forked watchdog on a tight loop, and race `PR_SET_DUMPABLE(0)` to deny its `ptrace` attach | the layered kill still wins → **killed** (see "Beyond detection" below) |
+| 6 | **seccomp `/proc` spoofing** (`zygisk-seccomp-spoof/`) | a `SECCOMP_RET_USER_NOTIF` filter + root supervisor intercepts the `openat` reads of `/proc/self/{maps,status,mounts}` at the kernel boundary — below libc **and** raw `SVC` — and hands back a scrubbed copy, hiding injected libs / hooks from the RASP's introspection | the loader's in-memory view (`dl_iterate_phdr`) can't be spoofed and disagrees with the doctored maps → **killed** (see "Beyond hooking" below) |
+
+### Deeper red-team modules (same attacks, deeper variants)
+
+Beyond the entry-level probes above, the full red-team suite is included — each module
+is scoped to `com.example.hydrasample` and inert against any other app, and each
+targets an attack the shipped runtime withstands:
+
+| Module | Class | Exercises |
+|---|---|---|
+| [`zygisk-ret-patch/`](zygisk-ret-patch/) | native, in-memory | `ret`-patch any internal `libdicore.so` function by offset — the generic vehicle for neutering the sweep entry (`nat_o`), the funnel (`collect`), or the kill path (`di_enforce_kill` / `di_condemn` / `di_detonate`). Beaten by the prologue self-hook watch + the forked watchdog. |
+| [`magisk-bindmount-lib/`](magisk-bindmount-lib/) | on-disk, load-time | bind-mount a patched `libdicore.so` over the app's extracted lib (Magisk form of attack #3). Beaten by the build-baked `.text` hash. |
+| [`lsposed-neutralize/`](lsposed-neutralize/) | Java/ART boundary | LSPosed hooks on the runtime's own up-calls — `FrameworkShim.q` (starve the fingerprint asset) and `K.o()` (skip the whole sweep). Beaten by native fingerprint recovery + the watchdog's completion deadline. |
+| [`zygisk-survive-crash/`](zygisk-survive-crash/) | kill suppression | all-out attack on the kill itself (see attack #5). |
+| [`zygisk-seccomp-spoof/`](zygisk-seccomp-spoof/) | observation spoofing | app-side seccomp filter (see attack #6); the generic root supervisor is documented in full but not shipped as a drop-in binary — see that module's README. |
 
 ## How to observe the result
 
@@ -51,14 +65,14 @@ above). The kill is deliberately layered so that no single in-process hook defea
   watchdog acts on an authenticated heartbeat verdict, so `ret`-hooking the
   in-process path does not save the process.
 
-**Transparency note, honestly stated.** The generic attack *techniques* are described
-here in full. We do **not** ship the runnable "survive the kill" module in this public
-repo: a module that actually suppressed a layer would be a working bypass, and we
-publish an attack here only once the shipped runtime is confirmed to survive it. When
-a red-team run finds a surviving layer, it is fixed first, then the (now-defeated)
-attack is published. This is why the offensive depth lives in a private suite and the
-public one shows only attacks the runtime withstands — not to hide behavior, but to
-avoid handing out a live neutralization while a fix is in flight.
+**Transparency note, honestly stated.** The generic attack *techniques* AND the
+runnable modules are published here — including `zygisk-survive-crash/`, the all-out
+attack on the kill itself. The rule is timing, not secrecy: an attack is published
+only once the shipped runtime is confirmed to **survive** it. When a red-team run finds
+a surviving layer, it is fixed first, then the (now-defeated) attack is published. The
+one thing deliberately withheld is any tool that is a **general-purpose evasion
+primitive** whose usefulness is independent of this runtime — see the seccomp note
+below. Every module here is scoped to the sample and inert against any other app.
 
 ## Beyond hooking: spoofing what the RASP *sees*
 
@@ -83,10 +97,14 @@ Two things defeat it here:
   syscall, so even a perfect syscall interceptor can't filter the crash once a
   contradiction is found.
 
-The generic technique is public and described here in full; as with the other
-attacks, a runnable spoofing tool is **not** shipped in this repo — a working
-`/proc`-hider is a live evasion primitive, so it stays in the private red-team until
-the shipped runtime is confirmed to defeat it (which it now is).
+The generic technique is public and described here in full, and the **app-side**
+filter module ships (`zygisk-seccomp-spoof/module.cpp`). The one piece held back is the
+root **supervisor daemon** — a working `/proc`-hider is a general-purpose evasion
+primitive that blinds *any* `/proc`-based RASP, not just this one, so shipping a
+turnkey binary would hand out a live weapon unrelated to hydra. Its full algorithm is
+documented step-by-step in `zygisk-seccomp-spoof/README.md` — the method is withheld
+from being drop-in, not from being understood. The runtime defeats the attack (which
+it now does) via the un-spoofable `dl_iterate_phdr` cross-check.
 
 > Red-team / research use only. These modules tamper with a process on purpose;
 > they are inert against any app other than the sample.

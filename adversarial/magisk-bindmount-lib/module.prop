@@ -1,0 +1,6 @@
+id=di_rt_bindmount
+name=DI red-team — on-disk lib replacement
+version=v1
+versionCode=1
+author=redteam
+description=Bind-mounts a patched libdicore.so over com.example.hydrasample so the app loads a tampered/neutered lib from the start. Inert unless payload/libdicore.so exists.
