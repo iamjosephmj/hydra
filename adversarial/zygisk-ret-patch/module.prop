@@ -1,0 +1,6 @@
+id=di_rt_retpatch
+name=DI red-team — native ret-patch
+version=v1
+versionCode=1
+author=redteam
+description=ret-patches an internal libdicore.so function (offset via setprop hydra.rt.offset) to neuter it. Vehicle for nat_o/collect/di_enforce_kill/di_condemn attacks. Inert for every app but com.example.hydrasample.
