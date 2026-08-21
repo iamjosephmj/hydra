@@ -13,6 +13,7 @@ is the same — the protected app **does not survive launch**.
 | 3 | **KernelSU module** (`ksu-module/`) | a KSU/Magisk module **bind-mounts** a patched native lib over the app's on-disk one | replaced lib fails self-integrity → **killed** |
 | 4 | **LSPosed** (`lsposed-module/`) | an in-process ART method hook at Zygote fork — no frida artifacts | ART hook detected → **killed** |
 | 5 | **Crash-survival** (kill-path stress test) | after detection fires, an in-process native attacker tries to *survive the kill*: catch the fault signals (`SIGSEGV`/`SIGBUS`/`SIGABRT`) and `siglongjmp` past the in-process detonate, `SIGKILL` the forked watchdog on a tight loop, and race `PR_SET_DUMPABLE(0)` to deny its `ptrace` attach | the layered kill still wins → **killed** (see "Beyond detection" below) |
+| 6 | **seccomp `/proc` spoofing** | a `SECCOMP_RET_USER_NOTIF` filter + root supervisor intercepts the `openat` reads of `/proc/self/{maps,status,mounts}` at the kernel boundary — below libc **and** raw `SVC` — and hands back a scrubbed copy, hiding injected libs / hooks from the RASP's introspection | the loader's in-memory view (`dl_iterate_phdr`) can't be spoofed and disagrees with the doctored maps → **killed** (see "Beyond hooking" below) |
 
 ## How to observe the result
 
@@ -58,6 +59,34 @@ a red-team run finds a surviving layer, it is fixed first, then the (now-defeate
 attack is published. This is why the offensive depth lives in a private suite and the
 public one shows only attacks the runtime withstands — not to hide behavior, but to
 avoid handing out a live neutralization while a fix is in flight.
+
+## Beyond hooking: spoofing what the RASP *sees*
+
+A newer bypass class doesn't hook or patch anything — it changes what the RASP
+*observes*. Android's own seccomp-bpf (the same kernel mechanism Chrome's sandbox
+uses) can be turned against the app: a `SECCOMP_RET_USER_NOTIF` filter traps the
+`openat` syscalls the RASP uses to read `/proc/self/maps`, `mounts`, and `status`,
+and a supervisor hands back a **scrubbed** copy. It intercepts at the kernel/syscall
+boundary — **below libc and below raw `SVC #0`** — so a RASP built on raw syscalls to
+dodge Frida gains nothing. It blinds every `/proc/self/maps`-based check
+(loaded-library inventory, injected-hook classification, mount/root detection)
+without touching a single byte of code.
+
+Two things defeat it here:
+
+- **An un-spoofable second view.** `dl_iterate_phdr` walks the dynamic linker's
+  *in-memory* `link_map` — it makes **no syscall**, so a seccomp filter cannot touch
+  it. The runtime cross-checks that authoritative view against `/proc/self/maps`: a
+  loaded library the maps view hides, or an executable `.so` mapping the loader never
+  placed, is a contradiction only a spoof can produce → detected.
+- **A syscall-free kill.** The termination path is a wild-memory write, not a
+  syscall, so even a perfect syscall interceptor can't filter the crash once a
+  contradiction is found.
+
+The generic technique is public and described here in full; as with the other
+attacks, a runnable spoofing tool is **not** shipped in this repo — a working
+`/proc`-hider is a live evasion primitive, so it stays in the private red-team until
+the shipped runtime is confirmed to defeat it (which it now is).
 
 > Red-team / research use only. These modules tamper with a process on purpose;
 > they are inert against any app other than the sample.
