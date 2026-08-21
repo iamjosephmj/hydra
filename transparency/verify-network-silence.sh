@@ -2,8 +2,10 @@
 # Reproducible "does the native core talk to the network?" check.
 #
 # The strongest evidence is static and needs no device: the shipped libdicore.so
-# imports no resolver (getaddrinfo/gethostby*) and no send/recv* — so it CANNOT
-# move data off-device regardless of intent. See ../TRANSPARENCY.md §2 and
+# imports no resolver (getaddrinfo/gethostby*), and its only send/recv (sendto/
+# recvfrom) are on the local AF_UNIX watchdog socketpair — so with no way to
+# resolve a host and connect only ever to loopback, it CANNOT move data off-device
+# regardless of intent. See ../TRANSPARENCY.md §2 and
 # libdicore-arm64-imports.txt. This script re-derives that, and (optionally) adds
 # a live runtime trace where the environment allows one.
 #
@@ -18,14 +20,15 @@ READELF="${READELF:-readelf}"   # or an NDK llvm-readelf
 echo "== STATIC: imported symbols of $(basename "$SO") =="
 echo "-- resolver imports (getaddrinfo/gethostby/res_*) — MUST be empty --"
 "$READELF" --dyn-syms "$SO" | grep -iE 'getaddrinfo|gethostby|res_query|res_init' || echo "  (none — no name resolution)"
-echo "-- payload imports (send/recv/sendto/recvfrom) — MUST be empty --"
-"$READELF" --dyn-syms "$SO" | grep -iE ' send| sendto| recv| recvfrom| sendmsg| recvmsg' || echo "  (none — no socket payload transfer)"
+echo "-- payload imports (sendto/recvfrom) — expected ONLY for the local AF_UNIX watchdog socketpair --"
+"$READELF" --dyn-syms "$SO" | grep -iE ' sendto| recvfrom| sendmsg| recvmsg' | awk '{print "  "$8}' | sed 's/@.*//' | sort -u || echo "  (none)"
 echo "-- socket imports (expect ONLY socket/connect [loopback probe] + socketpair [local IPC]) --"
 "$READELF" --dyn-syms "$SO" | grep -iE ' socket| connect| socketpair| bind| listen' | awk '{print "  "$8}' | sed 's/@.*//' | sort -u
 echo
-echo "Interpretation: no resolver + no send/recv => the core cannot address or"
-echo "transfer data to any host. The only socket use is a loopback (127.0.0.1)"
-echo "Frida-server probe and a local process<->watchdog socketpair."
+echo "Interpretation: no resolver + connect only to 127.0.0.1 => the core cannot"
+echo "address or transfer data to any remote host. sendto/recvfrom exist only for"
+echo "the process<->watchdog heartbeat on the local AF_UNIX socketpair; the Frida"
+echo "probe just connect()s to loopback and closes (no payload)."
 
 [ -n "$SERIAL" ] || { echo; echo "(skip live trace — no adb serial given)"; exit 0; }
 

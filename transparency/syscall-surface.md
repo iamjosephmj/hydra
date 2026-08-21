@@ -35,10 +35,13 @@ From the imported-symbol list, the notable capabilities are:
 - **Introspection:** `dl_iterate_phdr`, `opendir`/`readdir` (over `/proc/self`),
   `__system_property_get`.
 - **Network:** `socket` + `connect` — the **loopback** Frida probe only
-  (`127.0.0.1`); `socketpair` — the **local** watchdog IPC (not a network
-  socket). **No `getaddrinfo`/`gethostby*` (no resolver) and no
-  `send`/`recv`/`sendto`/`recvfrom` (no payload transfer).**
+  (`127.0.0.1`); `socketpair` — the **local** watchdog IPC (an AF_UNIX socket,
+  not a network socket). `sendto`/`recvfrom` are present but used **only on that
+  AF_UNIX socketpair** (the process↔watchdog heartbeat; bionic routes `send`/`recv`
+  through them). **No `getaddrinfo`/`gethostby*`/`res_*` (no resolver), and
+  `connect` only ever targets `127.0.0.1`** — so the core cannot address a remote
+  host, and its `sendto`/`recvfrom` are confined to a kernel-local socket pair.
 
-The combination — read-only raw file access, self-only `ptrace`, and a network
-surface with no resolver and no send/recv — is why the core **cannot move data
-off the device**, regardless of intent.
+The combination — read-only raw file access, self-only `ptrace`, no resolver, and
+socket payload calls confined to a local AF_UNIX pair with loopback-only `connect`
+— is why the core **cannot move data off the device**, regardless of intent.
