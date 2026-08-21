@@ -110,13 +110,15 @@ What you will find, and what it means:
 | Imported? | Symbol(s) | Why it's there |
 |:--:|---|---|
 | ✅ yes | `socket`, `connect` | the **loopback** Frida probe above — `127.0.0.1` only |
-| ✅ yes | `socketpair` | the **local** watchdog IPC (process ↔ its forked child) — not a network socket |
+| ✅ yes | `socketpair` | the **local** watchdog IPC (process ↔ its forked child) — an AF_UNIX socket, not a network socket |
+| ✅ yes | `sendto`, `recvfrom` | the process↔watchdog **heartbeat on that AF_UNIX socketpair** only (bionic routes `send`/`recv` through them); the loopback probe uses neither |
 | ❌ no | `getaddrinfo`, `gethostbyname`, `res_*` | **no name resolution** — it cannot even *resolve* a remote host |
-| ❌ no | `send`, `sendto`, `recv`, `recvfrom` | **no socket payload transfer** — it never sends or receives data over a socket |
+| ❌ no | `sendmsg`, `recvmsg` | not used at all |
 
 So the binary itself confirms it: the only socket calls exist for a loopback
-probe and local IPC, and with **no resolver and no send/recv**, there is no way
-for it to address or move data to anywhere off the device.
+probe and local IPC, the `sendto`/`recvfrom` are confined to the kernel-local
+watchdog socketpair, and with **no resolver and `connect` only to `127.0.0.1`**,
+there is no way for it to address or move data to anywhere off the device.
 
 ---
 
@@ -196,8 +198,8 @@ Committed evidence you can read and re-derive yourself, under
 - **[`libdicore-arm64-imports.txt`](transparency/libdicore-arm64-imports.txt)** —
   the complete list of external functions the shipped arm64 core calls, dumped
   from the real `libdicore.so` with `llvm-readelf`. This is the ground truth for
-  §2: no resolver, no `send`/`recv`, only loopback `socket`/`connect` +
-  `socketpair`.
+  §2: no resolver; `sendto`/`recvfrom` only on the local `socketpair`; loopback
+  `socket`/`connect` (`127.0.0.1`) + `socketpair`.
 - **[`SBOM.md`](transparency/SBOM.md)** — the software bill of materials: your
   logic plus exactly two vendored libraries (mbed TLS 3.6.2, miniz 3.0.2), with
   licenses. No analytics, networking, crash-reporting, or identifier library.
